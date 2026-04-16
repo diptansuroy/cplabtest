@@ -1,1 +1,2154 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CS F111 — Lab Test Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:    #faf8f4;
+  --paper:    #f4f1eb;
+  --parchment:#ede9df;
+  --sand:     #e2ddd3;
+  --warm-mid: #c9c2b4;
+  --ink:      #2c2416;
+  --ink-mid:  #4a3f30;
+  --ink-soft: #7a6e5e;
+  --ink-faint:#a39887;
+  --rust:     #c0441e;
+  --rust-soft:#e05a30;
+  --rust-pale:#fdf0eb;
+  --rust-tint:#f8e0d6;
+  --olive:    #5c6b3a;
+  --olive-pale:#eef2e6;
+  --gold:     #b5861e;
+  --gold-pale:#fdf4e0;
+  --blue-ink: #2b4a7a;
+  --blue-pale:#e8eef8;
+  --plum:     #6b3a5c;
+  --plum-pale:#f4eaf2;
+  --border:   #ddd8cf;
+  --border-strong:#c9c2b4;
+  --shadow:   rgba(44,36,22,0.06);
+  --shadow-md:rgba(44,36,22,0.12);
+  --code-bg:  #f0ece4;
+  --code-border:#ddd8cf;
+  
+  --font-serif: 'Lora', Georgia, serif;
+  --font-sans:  'DM Sans', sans-serif;
+  --font-mono:  'DM Mono', 'Courier New', monospace;
+
+  --topbar-h: 58px;
+  --sidebar-w: 240px;
+  --mobile-nav-h: 60px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--ink);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ═══════════════════════ TOPBAR ═══════════════════════ */
+#topbar {
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 0;
+  flex-shrink: 0;
+  z-index: 300;
+  box-shadow: 0 1px 8px var(--shadow);
+}
+
+.tb-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-right: 20px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.tb-logo {
+  width: 34px; height: 34px;
+  background: var(--rust);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+.tb-text { display: flex; flex-direction: column; line-height: 1.1; }
+.tb-name {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.tb-course {
+  font-size: 11px;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+.desktop-tabs {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.wtab {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s;
+  color: var(--ink-soft);
+  border: 1px solid transparent;
+  user-select: none;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+}
+.wtab:hover { color: var(--ink); background: var(--parchment); }
+.wtab.active {
+  color: var(--rust);
+  background: var(--rust-pale);
+  border-color: var(--rust-tint);
+  font-weight: 600;
+}
+.wtab-icon { font-size: 14px; }
+
+/* ═══════════════════════ LAYOUT ═══════════════════════ */
+#windows {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+.window-panel {
+  width: 100%;
+  height: 100%;
+  display: none;
+  flex-direction: row;
+  overflow: hidden;
+}
+.window-panel.active { display: flex; }
+
+/* ═══════════════════════ SIDEBAR ═══════════════════════ */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--cream);
+  border-right: 1px solid var(--border);
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+
+/* Sidebar overlay backdrop (mobile) */
+.sidebar-backdrop {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(44,36,22,0.35);
+  z-index: 199;
+}
+
+.sb-header {
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.sb-search {
+  position: relative;
+}
+.sb-search input {
+  width: 100%;
+  background: var(--parchment);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px 7px 32px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.sb-search input:focus { border-color: var(--rust); box-shadow: 0 0 0 3px var(--rust-tint); }
+.sb-search input::placeholder { color: var(--ink-faint); }
+.sb-search-icon {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--ink-faint); font-size: 12px; pointer-events: none;
+}
+
+.sb-group { padding: 12px 0 4px; }
+.sb-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-family: var(--font-sans);
+  padding: 0 14px 6px;
+}
+
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+  text-decoration: none;
+  color: var(--ink-mid);
+}
+.sb-item:hover { background: var(--parchment); color: var(--ink); }
+.sb-item.active {
+  background: var(--rust-pale);
+  border-left-color: var(--rust);
+  color: var(--rust);
+}
+.sb-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-faint);
+  width: 20px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.sb-item.active .sb-num { color: var(--rust); }
+.sb-label { font-size: 13px; font-weight: 500; line-height: 1.3; }
+.sb-badge {
+  margin-left: auto;
+  font-size: 9.5px;
+  font-family: var(--font-mono);
+  padding: 1.5px 5px;
+  border-radius: 4px;
+  background: var(--parchment);
+  color: var(--ink-soft);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sb-badge.hot { background: var(--gold-pale); color: var(--gold); border-color: #e8d08a; }
+.sb-badge.exam { background: var(--rust-pale); color: var(--rust); border-color: var(--rust-tint); }
+.sb-badge.new-b { background: var(--olive-pale); color: var(--olive); border-color: #c8d8a0; }
+
+/* ═══════════════════════ CONTENT AREA ═══════════════════════ */
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--paper);
+}
+.content-area::-webkit-scrollbar { width: 5px; }
+.content-area::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+
+.content-sec { display: none; animation: fadeUp 0.22s ease; }
+.content-sec.active { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ═══════════════════════ HERO ═══════════════════════ */
+.hero {
+  padding: 44px 44px 36px;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+  background: var(--cream);
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 44px; right: 44px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--rust) 0%, transparent 60%);
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.eyebrow-line { width: 28px; height: 2px; background: var(--rust); border-radius: 1px; }
+.eyebrow-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--rust);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.hero-h1 {
+  font-family: var(--font-serif);
+  font-size: 52px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+.hero-h1 .hl { color: var(--rust); font-style: italic; }
+.hero-p { font-size: 15px; color: var(--ink-soft); max-width: 500px; line-height: 1.75; margin-bottom: 30px; }
+
+.stat-row { display: flex; gap: 32px; flex-wrap: wrap; }
+.stat { text-align: left; }
+.stat-num {
+  font-family: var(--font-serif);
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--rust);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--ink-faint);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+/* ═══════════════════════ LAB GRID ═══════════════════════ */
+.lab-grid-wrap { padding: 32px 44px; }
+.section-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-family: var(--font-sans);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.lab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+.lab-tile {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.lab-tile:hover {
+  border-color: var(--rust);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--shadow-md);
+}
+.lt-num { font-family: var(--font-mono); font-size: 10px; color: var(--rust); font-weight: 500; margin-bottom: 7px; letter-spacing: 0.08em; }
+.lt-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; line-height: 1.35; color: var(--ink); }
+.lt-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.lt-tag { font-size: 9.5px; font-family: var(--font-mono); padding: 2px 6px; border-radius: 4px; background: var(--parchment); color: var(--ink-soft); border: 1px solid var(--border); }
+
+/* ═══════════════════════ LAB SECTION ═══════════════════════ */
+.lab-sec { padding: 40px 44px; }
+.lab-sec-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.lab-badge {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  background: var(--rust);
+  padding: 4px 10px 3px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.lab-title { font-family: var(--font-serif); font-size: 24px; font-weight: 700; line-height: 1.25; margin-bottom: 4px; color: var(--ink); }
+.lab-sub { font-size: 12px; color: var(--ink-faint); font-family: var(--font-mono); }
+
+.pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 22px; }
+.pill { font-size: 11px; font-family: var(--font-mono); padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); color: var(--ink-soft); background: var(--cream); }
+.pill.u { border-color: #a8c09a; color: var(--olive); background: var(--olive-pale); }
+.pill.c { border-color: #a0b8d8; color: var(--blue-ink); background: var(--blue-pale); }
+.pill.m { border-color: #c4a0c0; color: var(--plum); background: var(--plum-pale); }
+.pill.h { border-color: #e0c080; color: var(--gold); background: var(--gold-pale); }
+
+/* ═══════════════════════ CARDS ═══════════════════════ */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.grid-1 { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px; }
+
+.card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px var(--shadow);
+}
+.card-head {
+  padding: 10px 14px 9px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--parchment);
+}
+.ch-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.ch-rust { background: var(--rust); }
+.ch-olive { background: var(--olive); }
+.ch-gold { background: var(--gold); }
+.ch-blue { background: var(--blue-ink); }
+.ch-plum { background: var(--plum); }
+.card-title { font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); font-family: var(--font-sans); }
+.card-body { padding: 14px; }
+
+pre, code { font-family: var(--font-mono); }
+.codeblock {
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 12px;
+  line-height: 1.8;
+  overflow-x: auto;
+  white-space: pre;
+  color: var(--ink-mid);
+}
+.kw  { color: var(--blue-ink); font-weight: 600; }
+.fn  { color: var(--olive); }
+.str { color: var(--rust); }
+.nm  { color: var(--gold); }
+.cm  { color: var(--ink-faint); font-style: italic; }
+.tp  { color: var(--plum); }
+.mc  { color: var(--blue-ink); }
+.op  { color: var(--ink-mid); }
+
+.cmd-tbl { width: 100%; border-collapse: collapse; }
+.cmd-tbl tr { border-bottom: 1px solid var(--parchment); }
+.cmd-tbl tr:last-child { border-bottom: none; }
+.cmd-tbl td { padding: 7px 4px; font-size: 12.5px; vertical-align: top; }
+.cmd-tbl td:first-child { font-family: var(--font-mono); font-size: 11.5px; color: var(--rust); width: 44%; padding-right: 12px; line-height: 1.5; }
+.cmd-tbl td:last-child { color: var(--ink-soft); line-height: 1.55; }
+
+.concept-list { list-style: none; }
+.concept-list li { padding: 7px 0; border-bottom: 1px solid var(--parchment); font-size: 13px; display: flex; align-items: flex-start; gap: 9px; line-height: 1.6; color: var(--ink-mid); }
+.concept-list li:last-child { border-bottom: none; }
+.concept-list li::before { content: '→'; color: var(--rust); font-family: var(--font-mono); font-size: 11px; margin-top: 3px; flex-shrink: 0; }
+
+.qlist { list-style: none; counter-reset: qc; }
+.qlist li { counter-increment: qc; padding: 9px 0; border-bottom: 1px solid var(--parchment); font-size: 13px; display: flex; gap: 10px; line-height: 1.65; color: var(--ink-mid); }
+.qlist li:last-child { border-bottom: none; }
+.qlist li::before { content: 'Q' counter(qc); font-family: var(--font-mono); font-size: 9.5px; color: var(--rust); font-weight: 600; min-width: 22px; margin-top: 3px; }
+
+.info-box {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 11px 13px; border-radius: 8px; margin-bottom: 14px;
+  font-size: 13px; line-height: 1.65;
+}
+.info-box.tip { background: var(--gold-pale); border: 1px solid #e8d08a; }
+.info-box.warn { background: var(--rust-pale); border: 1px solid var(--rust-tint); }
+.ib-label { font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; flex-shrink: 0; margin-top: 2px; letter-spacing: 0.08em; }
+.tip .ib-label { color: var(--gold); }
+.warn .ib-label { color: var(--rust); }
+
+ic { font-family: var(--font-mono); font-size: 11.5px; background: var(--parchment); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; color: var(--rust-soft); }
+
+/* ═══════════════════════ PYQ WINDOW ═══════════════════════ */
+.pyq-hero {
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  padding: 44px 44px 36px;
+  position: relative;
+}
+.pyq-title {
+  font-family: var(--font-serif);
+  font-size: 46px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+  color: var(--ink);
+}
+.pyq-title .hl { color: var(--rust); font-style: italic; }
+.pyq-desc { font-size: 14px; color: var(--ink-soft); max-width: 540px; line-height: 1.75; margin-bottom: 24px; }
+
+.pyq-section { padding: 28px 44px; }
+
+.pyq-q-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px var(--shadow);
+}
+.pyq-q-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+}
+.pyq-q-head:hover { background: var(--parchment); }
+.pyq-q-num {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--rust);
+  width: 30px;
+  flex-shrink: 0;
+}
+.pyq-q-title { font-size: 14px; font-weight: 600; flex: 1; line-height: 1.4; color: var(--ink); }
+.pyq-q-marks {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gold);
+  background: var(--gold-pale);
+  border: 1px solid #e8d08a;
+  padding: 2px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.pyq-q-chevron { font-size: 11px; color: var(--ink-faint); transition: transform 0.2s; flex-shrink: 0; }
+.pyq-q-card.open .pyq-q-chevron { transform: rotate(180deg); }
+.pyq-q-card.open .pyq-q-head { background: var(--parchment); border-bottom: 1px solid var(--border); }
+.pyq-q-body { display: none; padding: 16px; }
+.pyq-q-card.open .pyq-q-body { display: block; }
+.pyq-q-desc { font-size: 13.5px; line-height: 1.75; color: var(--ink-mid); margin-bottom: 14px; }
+
+.pyq-sample {
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: 6px;
+  padding: 11px 13px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.75;
+  margin-bottom: 10px;
+  color: var(--ink-mid);
+  white-space: pre;
+  overflow-x: auto;
+}
+.sample-label { font-size: 10px; color: var(--ink-faint); font-family: var(--font-mono); font-weight: 500; margin-bottom: 5px; letter-spacing: 0.08em; text-transform: uppercase; }
+.pyq-insight {
+  display: flex; gap: 9px;
+  background: var(--blue-pale);
+  border: 1px solid #a0b8d8;
+  border-radius: 7px;
+  padding: 10px 13px;
+  font-size: 12.5px;
+  color: var(--blue-ink);
+  margin-top: 12px;
+  line-height: 1.6;
+  align-items: flex-start;
+}
+.pyq-insight .ii { font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; flex-shrink: 0; margin-top: 2px; }
+
+/* ═══════════════════════ EXPECTED QUESTIONS ═══════════════════════ */
+.eq-hero {
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  padding: 44px 44px 36px;
+}
+.eq-title {
+  font-family: var(--font-serif);
+  font-size: 46px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+  color: var(--ink);
+}
+.eq-title .hl { color: var(--olive); font-style: italic; }
+.eq-desc { font-size: 14px; color: var(--ink-soft); max-width: 540px; line-height: 1.75; margin-bottom: 24px; }
+
+.difficulty-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.diff-badge { display: flex; align-items: center; gap: 6px; font-family: var(--font-sans); font-size: 12px; font-weight: 500; color: var(--ink-soft); }
+.diff-dot { width: 8px; height: 8px; border-radius: 50%; }
+.diff-easy .diff-dot { background: var(--olive); }
+.diff-med .diff-dot { background: var(--gold); }
+.diff-hard .diff-dot { background: var(--rust); }
+
+.eq-section { padding: 28px 44px; }
+
+.eq-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px var(--shadow);
+  transition: box-shadow 0.2s;
+}
+.eq-card:hover { box-shadow: 0 3px 12px var(--shadow-md); }
+.eq-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.eq-head:hover { background: var(--parchment); }
+.eq-num {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--olive);
+  width: 36px;
+  flex-shrink: 0;
+  opacity: 0.65;
+}
+.eq-meta { flex: 1; min-width: 0; }
+.eq-qtitle { font-size: 15px; font-weight: 600; margin-bottom: 5px; line-height: 1.35; color: var(--ink); }
+.eq-tags-row { display: flex; gap: 5px; flex-wrap: wrap; }
+.eq-tag { font-size: 10px; font-family: var(--font-mono); padding: 2px 7px; border-radius: 4px; background: var(--parchment); color: var(--ink-soft); border: 1px solid var(--border); }
+.eq-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+.diff-pill { font-family: var(--font-mono); font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.d-easy { background: var(--olive-pale); color: var(--olive); border: 1px solid #c8d8a0; }
+.d-med  { background: var(--gold-pale);  color: var(--gold);  border: 1px solid #e8d08a; }
+.d-hard { background: var(--rust-pale);  color: var(--rust);  border: 1px solid var(--rust-tint); }
+
+.sol-btn {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-sans); font-size: 12px; font-weight: 600;
+  padding: 6px 14px; border-radius: 7px;
+  background: var(--olive-pale);
+  border: 1px solid #c8d8a0;
+  color: var(--olive);
+  transition: all 0.15s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.sol-btn:hover { background: #dfecd0; }
+.sol-icon { font-size: 11px; transition: transform 0.2s; }
+.eq-card.open .sol-icon { transform: rotate(180deg); }
+
+.eq-body { display: none; border-top: 1px solid var(--border); }
+.eq-card.open .eq-body { display: block; }
+
+.eq-tabs {
+  display: flex;
+  background: var(--parchment);
+  border-bottom: 1px solid var(--border);
+  padding: 0 18px;
+  gap: 0;
+  overflow-x: auto;
+}
+.eq-tab {
+  font-size: 12px; font-weight: 600; font-family: var(--font-sans);
+  padding: 11px 16px 9px;
+  cursor: pointer;
+  color: var(--ink-soft);
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.eq-tab:hover { color: var(--ink); }
+.eq-tab.active { color: var(--olive); border-bottom-color: var(--olive); }
+
+.eq-tab-content { display: none; padding: 18px; }
+.eq-tab-content.active { display: block; }
+.eq-problem { font-size: 13.5px; line-height: 1.8; color: var(--ink-mid); margin-bottom: 16px; }
+.eq-hint {
+  background: var(--gold-pale); border: 1px solid #e8d08a;
+  border-radius: 8px; padding: 11px 13px;
+  font-size: 12.5px; color: var(--ink-mid); margin-bottom: 14px; line-height: 1.65;
+}
+.eq-hint strong { color: var(--gold); }
+
+.sol-file { background: var(--code-bg); border: 1px solid var(--code-border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+.sol-file-header { display: flex; align-items: center; gap: 10px; padding: 7px 13px; background: var(--parchment); border-bottom: 1px solid var(--code-border); }
+.sol-file-name { font-family: var(--font-mono); font-size: 11px; color: var(--rust); font-weight: 600; }
+.sol-file-type { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faint); margin-left: auto; }
+.sol-code { padding: 13px 15px; font-size: 11.5px; line-height: 1.8; overflow-x: auto; white-space: pre; color: var(--ink-mid); font-family: var(--font-mono); }
+
+.key-insight-box {
+  background: var(--olive-pale);
+  border: 1px solid #c8d8a0;
+  border-radius: 8px; padding: 14px 15px; margin-top: 12px;
+}
+.ki-title { font-size: 10.5px; font-weight: 700; color: var(--olive); font-family: var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+.ki-list { list-style: none; }
+.ki-list li { font-size: 13px; line-height: 1.65; padding: 4px 0; color: var(--ink-mid); display: flex; gap: 8px; }
+.ki-list li::before { content: '✦'; color: var(--olive); font-size: 9px; margin-top: 4px; flex-shrink: 0; }
+
+/* ═══════════════════════ QUIZ ═══════════════════════ */
+.quiz-wrap { padding: 40px 44px; }
+.quiz-hero-text {
+  margin-bottom: 26px;
+}
+.quiz-hero-text h2 {
+  font-family: var(--font-serif);
+  font-size: 38px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.quiz-hero-text h2 span { color: var(--rust); font-style: italic; }
+.quiz-hero-text p { font-size: 14px; color: var(--ink-soft); line-height: 1.65; }
+
+.quiz-box {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  max-width: 680px;
+  box-shadow: 0 2px 10px var(--shadow);
+}
+.qz-prog { font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); margin-bottom: 4px; letter-spacing: 0.05em; }
+.qz-score { font-family: var(--font-serif); font-size: 13px; color: var(--olive); font-weight: 600; margin-bottom: 16px; }
+.qz-q { font-size: 16px; font-weight: 600; margin-bottom: 18px; line-height: 1.55; color: var(--ink); font-family: var(--font-serif); }
+.qz-opts { display: flex; flex-direction: column; gap: 9px; }
+.qz-opt {
+  background: var(--parchment);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 11px 15px;
+  font-family: var(--font-sans); font-size: 13px;
+  cursor: pointer; transition: all 0.15s; line-height: 1.5; color: var(--ink-mid);
+}
+.qz-opt:hover { border-color: var(--rust); background: var(--rust-pale); color: var(--rust); }
+.qz-opt.correct { border-color: var(--olive); background: var(--olive-pale); color: var(--olive); font-weight: 600; }
+.qz-opt.wrong   { border-color: var(--rust);  background: var(--rust-pale);  color: var(--rust);  font-weight: 600; }
+.qz-fb { margin-top: 14px; padding: 11px 13px; border-radius: 8px; font-size: 13px; line-height: 1.65; display: none; }
+.qz-fb.show { display: block; }
+.qz-fb.ok  { background: var(--olive-pale); border: 1px solid #c8d8a0; color: var(--olive); }
+.qz-fb.bad { background: var(--rust-pale);  border: 1px solid var(--rust-tint); color: var(--rust-soft); }
+.qz-nav { display: flex; gap: 10px; margin-top: 18px; }
+.btn { font-family: var(--font-sans); font-size: 13px; font-weight: 600; padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.15s; }
+.btn-p { background: var(--rust); color: white; }
+.btn-p:hover { background: var(--rust-soft); }
+.btn-g { background: var(--parchment); border: 1px solid var(--border); color: var(--ink-mid); }
+.btn-g:hover { background: var(--sand); }
+
+/* ═══════════════════════ PYQ HERO extra ═══════════════════════ */
+.pyq-year-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.pyq-year-badge { font-family: var(--font-serif); font-size: 13px; font-weight: 700; background: var(--rust); color: white; padding: 3px 12px 2px; border-radius: 5px; }
+.pyq-year-line { flex: 1; height: 1px; background: var(--border); }
+.pyq-year-note { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-faint); }
+
+/* ═══════════════════════ MOBILE NAV ═══════════════════════ */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: var(--mobile-nav-h);
+  background: var(--cream);
+  border-top: 1px solid var(--border);
+  z-index: 400;
+  box-shadow: 0 -2px 12px var(--shadow-md);
+}
+.mobile-nav-items {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+.mn-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: all 0.15s;
+  color: var(--ink-faint);
+  user-select: none;
+}
+.mn-item.active { color: var(--rust); }
+.mn-icon { font-size: 20px; line-height: 1; }
+.mn-label { font-size: 9.5px; font-weight: 600; font-family: var(--font-sans); letter-spacing: 0.04em; }
+
+/* Mobile sidebar toggle */
+.sidebar-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--parchment);
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 18px;
+  color: var(--ink-mid);
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.sidebar-toggle:hover { background: var(--sand); }
+
+/* ═══════════════════════ RESPONSIVE ═══════════════════════ */
+
+/* Tablet */
+@media (max-width: 900px) {
+  :root {
+    --sidebar-w: 210px;
+  }
+  .hero, .lab-sec, .lab-grid-wrap, .pyq-hero, .pyq-section, .eq-hero, .eq-section, .quiz-wrap {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+  .hero-h1, .pyq-title, .eq-title { font-size: 40px; }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  :root { --topbar-h: 52px; }
+  
+  .desktop-tabs { display: none; }
+  .sidebar-toggle { display: flex; }
+  .mobile-nav { display: block; }
+  
+  /* Push content up above mobile nav */
+  .content-area { padding-bottom: var(--mobile-nav-h); }
+  
+  /* Sidebar becomes overlay on mobile */
+  .sidebar {
+    position: fixed;
+    left: 0; top: var(--topbar-h);
+    height: calc(100vh - var(--topbar-h));
+    z-index: 200;
+    transform: translateX(-100%);
+    width: 280px;
+    min-width: 280px;
+    box-shadow: 4px 0 20px var(--shadow-md);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-backdrop.open { display: block; }
+
+  .hero, .lab-sec, .lab-grid-wrap { padding: 24px 20px; }
+  .pyq-hero, .pyq-section, .eq-hero, .eq-section { padding: 24px 20px; }
+  .quiz-wrap { padding: 24px 20px; }
+  
+  .hero-h1, .pyq-title, .eq-title, .quiz-hero-text h2 { font-size: 32px; }
+  .stat-num { font-size: 26px; }
+  .stat-row { gap: 20px; }
+  
+  .lab-grid { grid-template-columns: repeat(2, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; }
+  
+  .eq-head { padding: 14px; gap: 10px; }
+  .eq-num { font-size: 20px; width: 28px; }
+  .eq-qtitle { font-size: 14px; }
+  .eq-right { flex-direction: column; align-items: flex-end; gap: 6px; }
+  .sol-btn { font-size: 11px; padding: 5px 10px; }
+  .diff-pill { display: none; }
+  
+  .pyq-q-head { padding: 12px 14px; gap: 8px; }
+  .pyq-q-marks { display: none; }
+  
+  .lab-sec-header { flex-direction: column; gap: 8px; }
+  
+  .quiz-box { padding: 20px; }
+  .qz-q { font-size: 15px; }
+  
+  .tb-course { display: none; }
+  
+  /* Hide sidebar inside window-panel on mobile since we use overlay */
+  .window-panel .sidebar { display: flex; }
+}
+
+@media (max-width: 400px) {
+  .lab-grid { grid-template-columns: 1fr; }
+  .hero-h1, .pyq-title, .eq-title { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Menu">☰</div>
+  <div class="tb-brand">
+    <div class="tb-logo">CP</div>
+    <div class="tb-text">
+      <div class="tb-name">CS F111</div>
+      <div class="tb-course">Computer Programming · Lab Prep</div>
+    </div>
+  </div>
+  <div class="desktop-tabs" id="windowTabs">
+    <div class="wtab active" onclick="switchWindow('labs', this, 0)"><span class="wtab-icon">📋</span>Lab Sheets</div>
+    <div class="wtab" onclick="switchWindow('pyq', this, 1)"><span class="wtab-icon">📄</span>Past Year Questions</div>
+    <div class="wtab" onclick="switchWindow('expected', this, 2)"><span class="wtab-icon">✨</span>Expected Questions</div>
+    <div class="wtab" onclick="switchWindow('quiz', this, 3)"><span class="wtab-icon">🧠</span>Quick Quiz</div>
+  </div>
+</div>
+
+<!-- Sidebar backdrop (mobile overlay) -->
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+<div id="windows">
+
+<!-- ══════════════════ WINDOW 1: LAB SHEETS ══════════════════ -->
+<div class="window-panel active" id="win-labs">
+  <nav class="sidebar" id="labSidebar">
+    <div class="sb-header">
+      <div class="sb-search">
+        <span class="sb-search-icon">🔍</span>
+        <input type="text" placeholder="Search labs…" oninput="filterSidebar(this.value,'labSidebar')" />
+      </div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Overview</div>
+      <div class="sb-item active" onclick="showLabSec('lhome',this)"><span class="sb-num">~</span><span class="sb-label">Home</span></div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Unix Foundations</div>
+      <div class="sb-item" onclick="showLabSec('lab1',this)"><span class="sb-num">01</span><span class="sb-label">Unix Basics</span><span class="sb-badge">unix</span></div>
+      <div class="sb-item" onclick="showLabSec('lab2',this)"><span class="sb-num">02</span><span class="sb-label">Grep & Pipes</span><span class="sb-badge">unix</span></div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">C Fundamentals</div>
+      <div class="sb-item" onclick="showLabSec('lab3',this)"><span class="sb-num">03</span><span class="sb-label">Basic C Programs</span></div>
+      <div class="sb-item" onclick="showLabSec('lab4',this)"><span class="sb-num">04</span><span class="sb-label">Types & math.h</span></div>
+      <div class="sb-item" onclick="showLabSec('lab5',this)"><span class="sb-num">05</span><span class="sb-label">Control Flow</span></div>
+      <div class="sb-item" onclick="showLabSec('lab6',this)"><span class="sb-num">06</span><span class="sb-label">Functions</span></div>
+      <div class="sb-item" onclick="showLabSec('lab7',this)"><span class="sb-num">07</span><span class="sb-label">Arrays</span></div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Advanced C</div>
+      <div class="sb-item" onclick="showLabSec('lab8',this)"><span class="sb-num">08</span><span class="sb-label">Multi-file Projects</span><span class="sb-badge exam">TEST</span></div>
+      <div class="sb-item" onclick="showLabSec('lab9',this)"><span class="sb-num">09</span><span class="sb-label">Structures</span><span class="sb-badge exam">TEST</span></div>
+      <div class="sb-item" onclick="showLabSec('lab10',this)"><span class="sb-num">10</span><span class="sb-label">Pointers</span><span class="sb-badge exam">TEST</span></div>
+      <div class="sb-item" onclick="showLabSec('lab11',this)"><span class="sb-num">11</span><span class="sb-label">Dynamic Memory</span><span class="sb-badge exam">TEST</span></div>
+    </div>
+  </nav>
+  <div class="content-area" id="labContent">
+
+    <!-- HOME -->
+    <div class="content-sec active" id="lhome">
+      <div class="hero">
+        <div class="eyebrow"><div class="eyebrow-line"></div><div class="eyebrow-text">BITS Pilani · CS F111 · Lab Test Prep</div></div>
+        <div class="hero-h1">Lab Sheet<br><span class="hl">Reference</span></div>
+        <div class="hero-p">All 11 labs consolidated — commands, code patterns, key concepts, and review questions. Use the sidebar to jump between topics, or explore PYQs and Expected Questions from the tabs above.</div>
+        <div class="stat-row">
+          <div class="stat"><div class="stat-num">11</div><div class="stat-label">Lab Sheets</div></div>
+          <div class="stat"><div class="stat-num">40</div><div class="stat-label">Quiz Questions</div></div>
+          <div class="stat"><div class="stat-num">12</div><div class="stat-label">Expected Q+Solutions</div></div>
+          <div class="stat"><div class="stat-num">4</div><div class="stat-label">PYQ Sets</div></div>
+        </div>
+      </div>
+      <div class="lab-grid-wrap">
+        <div class="section-title">Jump to Lab</div>
+        <div class="lab-grid">
+          <div class="lab-tile" onclick="showLabSec('lab1',null)"><div class="lt-num">LAB 01</div><div class="lt-title">Unix Basics & File Commands</div><div class="lt-tags"><span class="lt-tag">pwd</span><span class="lt-tag">ls</span><span class="lt-tag">mkdir</span></div></div>
+          <div class="lab-tile" onclick="showLabSec('lab2',null)"><div class="lt-num">LAB 02</div><div class="lt-title">Grep, Pipes & Redirection</div><div class="lt-tags"><span class="lt-tag">grep</span><span class="lt-tag">pipe |</span><span class="lt-tag">&gt;&gt;</span></div></div>
+          <div class="lab-tile" onclick="showLabSec('lab3',null)"><div class="lt-num">LAB 03</div><div class="lt-title">Basic C Programs</div><div class="lt-tags"><span class="lt-tag">printf</span><span class="lt-tag">scanf</span><span class="lt-tag">gcc</span></div></div>
+          <div class="lab-tile" onclick="showLabSec('lab4',null)"><div class="lt-num">LAB 04</div><div class="lt-title">Data Types & math.h</div><div class="lt-tags"><span class="lt-tag">sizeof</span><span class="lt-tag">typecast</span><span class="lt-tag">-lm</span></div></div>
+          <div class="lab-tile" onclick="showLabSec('lab5',null)"><div class="lt-num">LAB 05</div><div class="lt-title">Control Flow</div><div class="lt-tags"><span class="lt-tag">if-else</span><span class="lt-tag">switch</span><span class="lt-tag">loops</span></div></div>
+          <div class="lab-tile" onclick="showLabSec('lab6',null)"><div class="lt-num">LAB 06</div><div class="lt-title">Functions & Scope</div><div class="lt-tags"><span class="lt-tag">recursion</span><span class="lt-tag">scope</span></div></div>
+          <div class="lab-tile" onclick="showLabSec('lab7',null)"><div class="lt-num">LAB 07</div><div class="lt-title">Arrays & Sorting</div><div class="lt-tags"><span class="lt-tag">search</span><span class="lt-tag">sort</span></div></div>
+          <div class="lab-tile" onclick="showLabSec('lab8',null)"><div class="lt-num">LAB 08</div><div class="lt-title">Multi-file Projects</div><div class="lt-tags"><span class="lt-tag">.h</span><span class="lt-tag">linking</span><span class="lt-tag">.sh</span></div></div>
+          <div class="lab-tile" onclick="showLabSec('lab9',null)"><div class="lt-num">LAB 09</div><div class="lt-title">Structures in C</div><div class="lt-tags"><span class="lt-tag">struct</span><span class="lt-tag">typedef</span></div></div>
+          <div class="lab-tile" onclick="showLabSec('lab10',null)"><div class="lt-num">LAB 10</div><div class="lt-title">Pointers</div><div class="lt-tags"><span class="lt-tag">*ptr</span><span class="lt-tag">&amp;addr</span></div></div>
+          <div class="lab-tile" onclick="showLabSec('lab11',null)"><div class="lt-num">LAB 11</div><div class="lt-title">Dynamic Memory & CLI</div><div class="lt-tags"><span class="lt-tag">malloc</span><span class="lt-tag">free</span><span class="lt-tag">argc</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAB 1 -->
+    <div class="content-sec" id="lab1">
+      <div class="lab-sec">
+        <div class="lab-sec-header"><div class="lab-badge">01</div><div><div class="lab-title">Unix Basics & File Commands</div><div class="lab-sub">pwd · ls · cd · mkdir · rmdir · cat · cp · mv · wc · head · tail · echo</div></div></div>
+        <div class="pills"><span class="pill u">Unix</span><span class="pill u">File System</span><span class="pill u">Terminal</span></div>
+        <div class="info-box tip"><span class="ib-label">TIP</span><span>Unix file system is a tree rooted at <ic>/</ic>. <strong>Absolute path</strong> starts with <ic>/</ic>. <strong>Relative path</strong> from current dir. <ic>.</ic> = current, <ic>..</ic> = parent, <ic>~</ic> = home.</span></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><div class="ch-dot ch-olive"></div><div class="card-title">Navigation</div></div><div class="card-body"><table class="cmd-tbl"><tr><td>pwd</td><td>Print current working directory</td></tr><tr><td>ls / ls -a / ls -l</td><td>List / show hidden / long format</td></tr><tr><td>ls -al</td><td>Long format + hidden files</td></tr><tr><td>cd /</td><td>Go to root</td></tr><tr><td>cd ..</td><td>Go to parent</td></tr><tr><td>cd ~</td><td>Go to home directory</td></tr><tr><td>cd -</td><td>Go to previous directory</td></tr><tr><td>man cmd</td><td>Show command manual</td></tr></table></div></div>
+          <div class="card"><div class="card-head"><div class="ch-dot ch-rust"></div><div class="card-title">File & Dir Operations</div></div><div class="card-body"><table class="cmd-tbl"><tr><td>mkdir n_dir</td><td>Create directory</td></tr><tr><td>mkdir -p a/b/c</td><td>Create nested dirs at once</td></tr><tr><td>rmdir dir</td><td>Remove empty directory only</td></tr><tr><td>rm -r dir</td><td>Remove dir + all contents</td></tr><tr><td>cat file</td><td>Print file content</td></tr><tr><td>cat &gt; file</td><td>Write to file (Ctrl+Z to stop)</td></tr><tr><td>cp f1 f2</td><td>Copy f1 to f2</td></tr><tr><td>cp *.txt dest/</td><td>Copy all .txt to dir</td></tr><tr><td>mv f1 f2</td><td>Rename / move f1 to f2</td></tr></table></div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><div class="ch-dot ch-blue"></div><div class="card-title">Count & Display</div></div><div class="card-body"><table class="cmd-tbl"><tr><td>wc -l / -w / -c / -m</td><td>Count lines / words / bytes / chars</td></tr><tr><td>head file</td><td>First 10 lines</td></tr><tr><td>head -n 5 file</td><td>First 5 lines</td></tr><tr><td>tail file</td><td>Last 10 lines</td></tr><tr><td>tail -n 5 file</td><td>Last 5 lines</td></tr><tr><td>echo "text"</td><td>Print text to terminal</td></tr></table></div></div>
+          <div class="card"><div class="card-head"><div class="ch-dot ch-gold"></div><div class="card-title">Path Examples</div></div><div class="card-body"><pre class="codeblock"><span class="cm"># Absolute (from root /)</span>
+cat /Goa/G_Dept/Phy/f1.txt
+
+<span class="cm"># Relative (from current dir)</span>
+cat G_Dept/Phy/f1.txt
+
+<span class="cm"># Combine f1 f2 into f3</span>
+cat f1 f2 > f3</pre></div></div>
+        </div>
+        <div class="card"><div class="card-head"><div class="ch-dot ch-plum"></div><div class="card-title">Review Questions</div></div><div class="card-body"><ol class="qlist"><li>Effect of <ic>cd ~</ic>? What is your directory after?</li><li>Difference between <ic>mkdir</ic> and <ic>mkdir -p</ic>?</li><li>How does <ic>rm</ic> differ from <ic>rmdir</ic>? What does <ic>rm -r</ic> do?</li><li>Create f3 with contents of f1 followed by f2. <small style="color:var(--ink-faint)">(Hint: cat f1 f2 &gt; f3)</small></li><li>From Goa directory, write absolute path to access CSIS/f1.txt in Pilani.</li></ol></div></div>
+      </div>
+    </div>
+
+    <!-- LAB 2 -->
+    <div class="content-sec" id="lab2">
+      <div class="lab-sec">
+        <div class="lab-sec-header"><div class="lab-badge">02</div><div><div class="lab-title">Grep, Pipes & Redirection</div><div class="lab-sub">grep · pipe | · I/O redirection &gt; &gt;&gt; &lt; · date · whoami · cal</div></div></div>
+        <div class="pills"><span class="pill u">grep</span><span class="pill u">Pipes</span><span class="pill u">Redirection</span></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><div class="ch-dot ch-olive"></div><div class="card-title">grep Options</div></div><div class="card-body"><table class="cmd-tbl"><tr><td>grep "pat" file</td><td>Lines matching pattern (case-sensitive)</td></tr><tr><td>grep -i "pat" file</td><td>Case-insensitive search</td></tr><tr><td>grep -v "pat" file</td><td>Lines NOT matching pattern</td></tr><tr><td>grep -c "pat" file</td><td>Count of matching lines</td></tr><tr><td>grep -o "pat" file</td><td>Print only matching part</td></tr></table></div></div>
+          <div class="card"><div class="card-head"><div class="ch-dot ch-rust"></div><div class="card-title">Pipe & Redirection</div></div><div class="card-body"><pre class="codeblock"><span class="cm"># Pipe: ls output → grep filter</span>
+ls -l | grep ".txt"
+
+<span class="cm"># Output redirect (overwrites)</span>
+wc -l test.c > result.txt
+
+<span class="cm"># Append (does NOT overwrite)</span>
+echo "hello" >> result.txt
+
+<span class="cm"># Chain: count .c files</span>
+ls | grep ".c" | wc -l</pre></div></div>
+        </div>
+        <div class="info-box tip"><span class="ib-label">KEY</span><span><ic>wc -l test.c</ic> shows filename + count. <ic>wc -l &lt; test.c</ic> shows count only. <ic>&gt;</ic> overwrites; <ic>&gt;&gt;</ic> appends. Pipe <ic>|</ic> connects stdout → stdin.</span></div>
+        <div class="card"><div class="card-head"><div class="ch-dot ch-plum"></div><div class="card-title">Review Questions</div></div><div class="card-body"><ol class="qlist"><li>What does <ic>ls -l | grep ".txt"</ic> do step by step?</li><li>What is the difference between <ic>&gt;</ic> and <ic>&gt;&gt;</ic>?</li><li>Store list of logged-in users in file <ic>userlist</ic>.</li><li>Combine contents of <ic>dirfile</ic> and <ic>userlist</ic> into <ic>file1</ic>.</li><li>What does <ic>grep -v "hello" file.txt</ic> print?</li></ol></div></div>
+      </div>
+    </div>
+
+    <!-- LAB 3 -->
+    <div class="content-sec" id="lab3">
+      <div class="lab-sec">
+        <div class="lab-sec-header"><div class="lab-badge">03</div><div><div class="lab-title">Basic C Programs</div><div class="lab-sub">printf · scanf · variables · format specifiers · gcc · escape sequences</div></div></div>
+        <div class="pills"><span class="pill c">C</span><span class="pill c">printf</span><span class="pill c">scanf</span><span class="pill u">gcc</span></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><div class="ch-dot ch-olive"></div><div class="card-title">C Program Structure + Compile</div></div><div class="card-body"><pre class="codeblock"><span class="mc">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+<span class="tp">int</span> <span class="fn">main</span>() {
+    <span class="fn">printf</span>(<span class="str">"Hello World!\n"</span>);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}
+
+<span class="cm">// Compile → creates a.out</span>
+gcc hello.c
+./a.out
+
+<span class="cm">// Compile with custom name</span>
+gcc hello.c -o hello_exe
+./hello_exe
+
+<span class="cm">// With math library</span>
+gcc prog.c -o prog -lm</pre></div></div>
+          <div class="card"><div class="card-head"><div class="ch-dot ch-rust"></div><div class="card-title">Format Specifiers</div></div><div class="card-body"><table class="cmd-tbl"><tr><td>%d</td><td>int (decimal integer)</td></tr><tr><td>%f</td><td>float</td></tr><tr><td>%lf</td><td>double</td></tr><tr><td>%c</td><td>char (single character)</td></tr><tr><td>%s</td><td>string (char array)</td></tr><tr><td>%lu</td><td>unsigned long (sizeof)</td></tr><tr><td>%5d / %-5d</td><td>Right / left-aligned width 5</td></tr><tr><td>%.2f</td><td>2 decimal places</td></tr><tr><td>%o / %x</td><td>Octal / Hexadecimal</td></tr></table></div></div>
+        </div>
+        <div class="info-box tip"><span class="ib-label">KEY</span><span><strong>Integer division truncates:</strong> <ic>3/2 = 1</ic> not 1.5. <ic>scanf</ic> needs <ic>&amp;</ic> before variable name (gives address). <ic>return 0</ic> means successful exit.</span></div>
+        <div class="card"><div class="card-head"><div class="ch-dot ch-blue"></div><div class="card-title">scanf + Arithmetic</div></div><div class="card-body"><pre class="codeblock"><span class="tp">int</span> a, b;
+<span class="fn">scanf</span>(<span class="str">"%d"</span>, <span class="op">&amp;</span>a);  <span class="cm">// & = address of a</span>
+<span class="fn">scanf</span>(<span class="str">"%d"</span>, <span class="op">&amp;</span>b);
+
+a <span class="op">+</span> b   <span class="cm">// addition</span>
+a <span class="op">/</span> b   <span class="cm">// INTEGER division — truncates!</span>
+a <span class="op">%</span> b   <span class="cm">// modulus (remainder)</span>
+<span class="cm">// 7/2 = 3, NOT 3.5</span>
+<span class="cm">// (double)7/2 = 3.5 ✓</span></pre></div></div>
+      </div>
+    </div>
+
+    <!-- LAB 4 -->
+    <div class="content-sec" id="lab4">
+      <div class="lab-sec">
+        <div class="lab-sec-header"><div class="lab-badge">04</div><div><div class="lab-title">Data Types, sizeof & math.h</div><div class="lab-sub">sizeof · short/long/signed/unsigned · type casting · math.h library</div></div></div>
+        <div class="pills"><span class="pill c">C</span><span class="pill h">math.h</span></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><div class="ch-dot ch-rust"></div><div class="card-title">Type Sizes + Qualifiers</div></div><div class="card-body"><table class="cmd-tbl"><tr><td>char</td><td>1 byte</td></tr><tr><td>short int</td><td>2 bytes</td></tr><tr><td>int</td><td>4 bytes</td></tr><tr><td>long</td><td>8 bytes</td></tr><tr><td>float</td><td>4 bytes</td></tr><tr><td>double</td><td>8 bytes</td></tr></table><div style="margin-top:10px;font-size:11.5px;color:var(--ink-soft)"><ic>long unsigned int</ic> ✅ valid<br><ic>long unsigned double</ic> ❌ invalid</div></div></div>
+          <div class="card"><div class="card-head"><div class="ch-dot ch-olive"></div><div class="card-title">math.h Functions (compile with -lm)</div></div><div class="card-body"><table class="cmd-tbl"><tr><td>sqrt(x)</td><td>Square root</td></tr><tr><td>pow(x, n)</td><td>x^n</td></tr><tr><td>sin/cos/tan(x)</td><td>Trig (x in radians)</td></tr><tr><td>exp(x)</td><td>e^x</td></tr><tr><td>log(x)</td><td>Natural log</td></tr><tr><td>log10(x)</td><td>Log base 10</td></tr><tr><td>floor/ceil/round(x)</td><td>Down/up/nearest integer</td></tr><tr><td>fabs(x)</td><td>Absolute value of float</td></tr></table></div></div>
+        </div>
+        <div class="card"><div class="card-head"><div class="ch-dot ch-blue"></div><div class="card-title">Type Casting</div></div><div class="card-body"><pre class="codeblock"><span class="cm">/* Syntax: (type) expression */</span>
+<span class="tp">double</span> d = <span class="nm">75.25</span>;
+<span class="tp">int</span> i = (<span class="tp">int</span>)d;       <span class="cm">// i = 75 (truncated)</span>
+
+<span class="cm">/* Avoid integer division */</span>
+<span class="tp">int</span> sum = <span class="nm">17</span>, count = <span class="nm">5</span>;
+<span class="tp">double</span> mean = (<span class="tp">double</span>) sum / count;  <span class="cm">// 3.4</span>
+
+<span class="cm">/* char → int (ASCII) */</span>
+<span class="tp">char</span> ch = <span class="str">'A'</span>;
+<span class="tp">int</span> ascii = (<span class="tp">int</span>)ch;   <span class="cm">// 65</span></pre></div></div>
+        <div class="info-box warn"><span class="ib-label">WARN</span><span>Always compile with <ic>-lm</ic> for math.h: <ic>gcc prog.c -o prog -lm</ic>. Without it: linker errors even if #include works.</span></div>
+      </div>
+    </div>
+
+    <!-- LAB 5 -->
+    <div class="content-sec" id="lab5">
+      <div class="lab-sec">
+        <div class="lab-sec-header"><div class="lab-badge">05</div><div><div class="lab-title">Control Flow: Branching & Loops</div><div class="lab-sub">if-else · switch · ternary ?: · while · do-while · for</div></div></div>
+        <div class="pills"><span class="pill c">C</span><span class="pill h">Loops</span><span class="pill h">Branching</span></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><div class="ch-dot ch-rust"></div><div class="card-title">Branching</div></div><div class="card-body"><pre class="codeblock"><span class="cm">/* if-else */</span>
+<span class="kw">if</span> (age <span class="op">&gt;=</span> <span class="nm">18</span>) { <span class="fn">printf</span>(<span class="str">"Vote\n"</span>); }
+<span class="kw">else</span> { <span class="fn">printf</span>(<span class="str">"No\n"</span>); }
+
+<span class="cm">/* ternary */</span>
+(age <span class="op">&gt;=</span> <span class="nm">18</span>) ? <span class="fn">printf</span>(<span class="str">"Yes"</span>) : <span class="fn">printf</span>(<span class="str">"No"</span>);
+
+<span class="cm">/* switch-case */</span>
+<span class="kw">switch</span>(day) {
+    <span class="kw">case</span> <span class="nm">1</span>: <span class="fn">printf</span>(<span class="str">"Mon"</span>); <span class="kw">break</span>;
+    <span class="kw">case</span> <span class="nm">2</span>: <span class="fn">printf</span>(<span class="str">"Tue"</span>); <span class="kw">break</span>;
+    <span class="kw">default</span>: <span class="fn">printf</span>(<span class="str">"Other"</span>);
+}</pre></div></div>
+          <div class="card"><div class="card-head"><div class="ch-dot ch-olive"></div><div class="card-title">Loops</div></div><div class="card-body"><pre class="codeblock"><span class="cm">/* while */</span>
+<span class="kw">while</span> (i <span class="op">&lt;=</span> N) { <span class="fn">printf</span>(<span class="str">"%d\n"</span>, i); i<span class="op">++</span>; }
+
+<span class="cm">/* do-while (runs ≥ once) */</span>
+<span class="kw">do</span> { <span class="fn">printf</span>(<span class="str">"%d\n"</span>, i); i<span class="op">++</span>; } <span class="kw">while</span>(i<span class="op">&lt;=</span>N);
+
+<span class="cm">/* for */</span>
+<span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">1</span>; i<span class="op">&lt;=</span>N; i<span class="op">++</span>) <span class="fn">printf</span>(<span class="str">"%d\n"</span>,i);
+
+<span class="cm">/* infinite */</span>
+<span class="kw">while</span>(<span class="nm">1</span>) { ... }</pre></div></div>
+        </div>
+        <div class="info-box warn"><span class="ib-label">BUG</span><span><ic>while(i = 2)</ic> is ASSIGNMENT not comparison → infinite loop. Must be <ic>while(i == 2)</ic>.</span></div>
+      </div>
+    </div>
+
+    <!-- LAB 6 -->
+    <div class="content-sec" id="lab6">
+      <div class="lab-sec">
+        <div class="lab-sec-header"><div class="lab-badge">06</div><div><div class="lab-title">Functions & Scope</div><div class="lab-sub">pass-by-value · scope · recursion · function declarations · blocks</div></div></div>
+        <div class="pills"><span class="pill c">C</span><span class="pill h">Functions</span><span class="pill c">Recursion</span></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><div class="ch-dot ch-olive"></div><div class="card-title">Function Pattern</div></div><div class="card-body"><pre class="codeblock"><span class="cm">/* Declaration */</span>
+<span class="tp">int</span> <span class="fn">factorial</span>(<span class="tp">int</span> n);
+
+<span class="cm">/* Recursive definition */</span>
+<span class="tp">int</span> <span class="fn">factorial</span>(<span class="tp">int</span> n) {
+    <span class="kw">if</span>(n <span class="op">&lt;=</span> <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+    <span class="kw">return</span> n <span class="op">*</span> <span class="fn">factorial</span>(n<span class="op">-</span><span class="nm">1</span>);
+}
+
+<span class="cm">/* Fibonacci recursive */</span>
+<span class="tp">int</span> <span class="fn">fib</span>(<span class="tp">int</span> n) {
+    <span class="kw">if</span>(n<span class="op">&lt;=</span><span class="nm">1</span>) <span class="kw">return</span> n;
+    <span class="kw">return</span> <span class="fn">fib</span>(n<span class="op">-</span><span class="nm">1</span>) <span class="op">+</span> <span class="fn">fib</span>(n<span class="op">-</span><span class="nm">2</span>);
+}</pre></div></div>
+          <div class="card"><div class="card-head"><div class="ch-dot ch-rust"></div><div class="card-title">Scope & Pass-by-Value</div></div><div class="card-body"><ul class="concept-list"><li><strong>Pass-by-value:</strong> function gets a copy — changes don't affect the original in caller</li><li><strong>Block scope:</strong> variables in <ic>{ }</ic> live only within that block</li><li>Uninitialized locals have <strong>garbage values</strong></li><li>Swap via pass-by-value <strong>does NOT work</strong> in caller</li></ul></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAB 7 -->
+    <div class="content-sec" id="lab7">
+      <div class="lab-sec">
+        <div class="lab-sec-header"><div class="lab-badge">07</div><div><div class="lab-title">Arrays</div><div class="lab-sub">linear search · binary search · selection sort · pass-by-reference</div></div></div>
+        <div class="pills"><span class="pill c">C</span><span class="pill c">Arrays</span><span class="pill h">Sorting</span></div>
+        <div class="info-box tip"><span class="ib-label">KEY</span><span>Arrays are passed by reference — changes inside function affect the original. <ic>sizeof(arr)</ic> inside a function = 8 (pointer size), NOT array size. Always pass size as a parameter.</span></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><div class="ch-dot ch-olive"></div><div class="card-title">Linear & Binary Search</div></div><div class="card-body"><pre class="codeblock"><span class="cm">/* Linear O(n) — any array */</span>
+<span class="tp">int</span> <span class="fn">linSearch</span>(<span class="tp">int</span> a[], <span class="tp">int</span> n, <span class="tp">int</span> x) {
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span>n; i<span class="op">++</span>)
+        <span class="kw">if</span>(a[i]<span class="op">==</span>x) <span class="kw">return</span> i<span class="op">+</span><span class="nm">1</span>;
+    <span class="kw">return</span> <span class="op">-</span><span class="nm">1</span>;
+}
+
+<span class="cm">/* Binary O(log n) — SORTED ONLY */</span>
+<span class="tp">int</span> <span class="fn">binSearch</span>(<span class="tp">int</span> a[], <span class="tp">int</span> n, <span class="tp">int</span> x) {
+    <span class="tp">int</span> lo=<span class="nm">0</span>, hi=n<span class="op">-</span><span class="nm">1</span>;
+    <span class="kw">while</span>(lo<span class="op">&lt;=</span>hi) {
+        <span class="tp">int</span> mid=(lo<span class="op">+</span>hi)<span class="op">/</span><span class="nm">2</span>;
+        <span class="kw">if</span>(a[mid]<span class="op">==</span>x) <span class="kw">return</span> mid<span class="op">+</span><span class="nm">1</span>;
+        <span class="kw">else if</span>(a[mid]<span class="op">&lt;</span>x) lo=mid<span class="op">+</span><span class="nm">1</span>;
+        <span class="kw">else</span> hi=mid<span class="op">-</span><span class="nm">1</span>;
+    }
+    <span class="kw">return</span> <span class="op">-</span><span class="nm">1</span>;
+}</pre></div></div>
+          <div class="card"><div class="card-head"><div class="ch-dot ch-rust"></div><div class="card-title">Selection Sort (Decreasing)</div></div><div class="card-body"><pre class="codeblock"><span class="tp">void</span> <span class="fn">selSortDec</span>(<span class="tp">int</span> a[], <span class="tp">int</span> n) {
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span>n<span class="op">-</span><span class="nm">1</span>; i<span class="op">++</span>) {
+        <span class="tp">int</span> mx = i;
+        <span class="kw">for</span>(<span class="tp">int</span> j=i<span class="op">+</span><span class="nm">1</span>; j<span class="op">&lt;</span>n; j<span class="op">++</span>)
+            <span class="kw">if</span>(a[j]<span class="op">&gt;</span>a[mx]) mx=j;
+        <span class="tp">int</span> t=a[i]; a[i]=a[mx]; a[mx]=t;
+    }
+}
+<span class="cm">/* Print ascending: loop backwards */</span>
+<span class="kw">for</span>(<span class="tp">int</span> i=n<span class="op">-</span><span class="nm">1</span>; i<span class="op">&gt;=</span><span class="nm">0</span>; i<span class="op">--</span>)
+    <span class="fn">printf</span>(<span class="str">"%d "</span>, a[i]);</pre></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAB 8 -->
+    <div class="content-sec" id="lab8">
+      <div class="lab-sec">
+        <div class="lab-sec-header"><div class="lab-badge">08</div><div><div class="lab-title">Multi-file C Projects</div><div class="lab-sub">header files · .o object files · linking · shell scripts · linker errors</div></div></div>
+        <div class="pills"><span class="pill c">C</span><span class="pill h">.h files</span><span class="pill u">Shell Script</span><span class="pill h">Exam!</span></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><div class="ch-dot ch-rust"></div><div class="card-title">Project Workflow</div></div><div class="card-body"><pre class="codeblock"><span class="cm"># Compile each .c to .o (no link)</span>
+gcc -c func.c
+gcc -c main.c
+
+<span class="cm"># Link .o files → executable</span>
+gcc -o myexe func.o main.o
+
+<span class="cm"># Run</span>
+./myexe
+
+<span class="cm"># Shell script (myScript.sh)</span>
+rm -f *.o *exe
+gcc -c func.c
+gcc -c main.c
+gcc -o myexe func.o main.o
+./myexe
+
+<span class="cm"># Run script</span>
+sh myScript.sh</pre></div></div>
+          <div class="card"><div class="card-head"><div class="ch-dot ch-gold"></div><div class="card-title">Linker Errors</div></div><div class="card-body"><ul class="concept-list"><li><strong>Undefined reference to 'foo':</strong> forgot to link .o file containing foo()'s definition</li><li><strong>Multiple definition of 'foo':</strong> two .o files both define the same function</li><li><strong>Undefined reference to main:</strong> main .o not included, or typo <ic>Main()</ic> vs <ic>main()</ic></li><li>Only ONE main() allowed across all linked files</li><li>.h = declarations only; .c = implementations</li></ul></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAB 9 -->
+    <div class="content-sec" id="lab9">
+      <div class="lab-sec">
+        <div class="lab-sec-header"><div class="lab-badge">09</div><div><div class="lab-title">Structures in C</div><div class="lab-sub">struct · typedef · #ifndef guards · modular struct projects</div></div></div>
+        <div class="pills"><span class="pill c">C</span><span class="pill h">struct</span><span class="pill h">Exam!</span></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><div class="ch-dot ch-olive"></div><div class="card-title">Struct + typedef</div></div><div class="card-body"><pre class="codeblock"><span class="cm">/* Define struct + typedef */</span>
+<span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="tp">int</span> ID;
+    <span class="tp">int</span> shelfNum;
+    <span class="tp">float</span> price;
+} BOOK;
+
+<span class="cm">/* Declare and use */</span>
+BOOK b1;
+b1.ID = <span class="nm">101</span>;
+b1.price = <span class="nm">450.0f</span>;
+
+<span class="cm">/* Array of structs */</span>
+BOOK catalog[<span class="nm">100</span>];
+catalog[<span class="nm">0</span>].ID = <span class="nm">1</span>;</pre></div></div>
+          <div class="card"><div class="card-head"><div class="ch-dot ch-rust"></div><div class="card-title">#ifndef Include Guards</div></div><div class="card-body"><pre class="codeblock"><span class="cm">/* book_def.h */</span>
+<span class="mc">#ifndef</span> BOOK_DEF_H
+<span class="mc">#define</span> BOOK_DEF_H
+
+<span class="kw">typedef</span> <span class="kw">struct</span> { ... } BOOK;
+<span class="tp">void</span> <span class="fn">printBook</span>(BOOK b);
+
+<span class="mc">#endif</span></pre>
+<div style="margin-top:10px;font-size:12px;color:var(--ink-soft)">Prevents <strong>redefinition errors</strong> when a header is included in multiple .c files. Without guards → compile errors.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAB 10 -->
+    <div class="content-sec" id="lab10">
+      <div class="lab-sec">
+        <div class="lab-sec-header"><div class="lab-badge">10</div><div><div class="lab-title">Pointers & Pointer Arithmetic</div><div class="lab-sub">*ptr · &addr · pointer arithmetic · call-by-reference · arrays as pointers</div></div></div>
+        <div class="pills"><span class="pill c">C</span><span class="pill m">Pointers</span><span class="pill h">Exam!</span></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><div class="ch-dot ch-blue"></div><div class="card-title">Pointer Basics & Arithmetic</div></div><div class="card-body"><pre class="codeblock"><span class="tp">int</span> x = <span class="nm">10</span>;
+<span class="tp">int</span> <span class="op">*</span>ptr = <span class="op">&amp;</span>x;    <span class="cm">// ptr = address of x</span>
+<span class="fn">printf</span>(<span class="str">"%d"</span>, <span class="op">*</span>ptr);  <span class="cm">// 10 (dereference)</span>
+<span class="op">*</span>ptr = <span class="nm">20</span>;          <span class="cm">// x becomes 20!</span>
+
+<span class="cm">/* Pointer arithmetic on arrays */</span>
+<span class="tp">int</span> arr[] = {<span class="nm">22</span>,<span class="nm">54</span>,<span class="nm">78</span>};
+<span class="tp">int</span> <span class="op">*</span>p = arr;
+<span class="op">*</span>(p<span class="op">++</span>)  <span class="cm">// 22, then p moves to arr[1]</span>
+arr[<span class="nm">1</span>] <span class="op">==</span> <span class="op">*</span>(arr<span class="op">+</span><span class="nm">1</span>) <span class="op">==</span> <span class="op">*</span>(p<span class="op">+</span><span class="nm">1</span>)</pre></div></div>
+          <div class="card"><div class="card-head"><div class="ch-dot ch-olive"></div><div class="card-title">Call-by-Reference</div></div><div class="card-body"><pre class="codeblock"><span class="cm">/* Return multiple values */</span>
+<span class="tp">void</span> <span class="fn">circleData</span>(<span class="tp">double</span> r,
+    <span class="tp">double</span> <span class="op">*</span>area, <span class="tp">double</span> <span class="op">*</span>peri) {
+    <span class="op">*</span>area = <span class="nm">3.14159</span> <span class="op">*</span> r <span class="op">*</span> r;
+    <span class="op">*</span>peri = <span class="nm">2</span> <span class="op">*</span> <span class="nm">3.14159</span> <span class="op">*</span> r;
+}
+<span class="cm">/* Call: */</span>
+<span class="tp">double</span> a, p;
+<span class="fn">circleData</span>(<span class="nm">5.0</span>, <span class="op">&amp;</span>a, <span class="op">&amp;</span>p);
+
+<span class="cm">/* Arrays as pointers (same!) */</span>
+<span class="tp">void</span> <span class="fn">foo</span>(<span class="tp">int</span> arr[])  { }
+<span class="tp">void</span> <span class="fn">foo</span>(<span class="tp">int</span> <span class="op">*</span>arr)   { }  <span class="cm">// identical</span></pre></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAB 11 -->
+    <div class="content-sec" id="lab11">
+      <div class="lab-sec">
+        <div class="lab-sec-header"><div class="lab-badge">11</div><div><div class="lab-title">Dynamic Memory & CLI Args</div><div class="lab-sub">malloc · calloc · free · argc · argv · atoi · heap vs stack</div></div></div>
+        <div class="pills"><span class="pill m">malloc</span><span class="pill m">free</span><span class="pill c">argc/argv</span><span class="pill h">Exam!</span></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><div class="ch-dot ch-plum"></div><div class="card-title">Dynamic Allocation</div></div><div class="card-body"><pre class="codeblock"><span class="mc">#include</span> <span class="str">&lt;stdlib.h&gt;</span>
+
+<span class="cm">/* malloc: uninitialized */</span>
+<span class="tp">int</span> <span class="op">*</span>arr = (<span class="tp">int</span><span class="op">*</span>)<span class="fn">malloc</span>(n <span class="op">*</span> <span class="kw">sizeof</span>(<span class="tp">int</span>));
+
+<span class="cm">/* calloc: zero-initialized */</span>
+<span class="tp">int</span> <span class="op">*</span>arr = (<span class="tp">int</span><span class="op">*</span>)<span class="fn">calloc</span>(n, <span class="kw">sizeof</span>(<span class="tp">int</span>));
+
+<span class="cm">/* Always check NULL */</span>
+<span class="kw">if</span>(arr <span class="op">==</span> <span class="kw">NULL</span>) { <span class="cm">/* handle error */</span> }
+
+arr[<span class="nm">0</span>] = <span class="nm">10</span>;  <span class="cm">// use like normal array</span>
+
+<span class="cm">/* ALWAYS free heap memory */</span>
+<span class="fn">free</span>(arr);</pre></div></div>
+          <div class="card"><div class="card-head"><div class="ch-dot ch-rust"></div><div class="card-title">Command Line Arguments</div></div><div class="card-body"><pre class="codeblock"><span class="tp">int</span> <span class="fn">main</span>(<span class="tp">int</span> argc, <span class="tp">char</span> <span class="op">*</span>argv[]) {
+    <span class="cm">// argc = count (includes prog name)</span>
+    <span class="cm">// argv[0] = program name "./a.out"</span>
+    <span class="cm">// argv[1] = first arg (string)</span>
+    
+    <span class="tp">int</span> n = <span class="fn">atoi</span>(argv[<span class="nm">1</span>]); <span class="cm">// str→int</span>
+}
+<span class="cm">/* ./prog 42 hello → argc=3 */</span>
+<span class="cm">/* argv[1]="42", argv[2]="hello" */</span></pre></div></div>
+        </div>
+        <div class="info-box warn"><span class="ib-label">WARN</span><span>Heap memory is NOT auto-released. Always <ic>free(ptr)</ic>. Never dereference uninitialized pointer: <ic>int *p; *p = 5;</ic> is undefined behavior.</span></div>
+      </div>
+    </div>
+
+  </div><!-- /labContent -->
+</div><!-- /win-labs -->
+
+<!-- ══════════════════ WINDOW 2: PYQs ══════════════════ -->
+<div class="window-panel" id="win-pyq">
+  <nav class="sidebar" id="pyqSidebar">
+    <div class="sb-header">
+      <div class="sb-search">
+        <span class="sb-search-icon">🔍</span>
+        <input type="text" placeholder="Search questions…" oninput="filterSidebar(this.value,'pyqSidebar')" />
+      </div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">2021–22</div>
+      <div class="sb-item active" onclick="showPYQSec('pyq2122',this,'pyqSidebar')"><span class="sb-num">★</span><span class="sb-label">Pizza Store</span><span class="sb-badge exam">30M</span></div>
+      <div class="sb-item" onclick="showPYQSec('pyq2122q2',this,'pyqSidebar')"><span class="sb-num">★</span><span class="sb-label">Pattern</span><span class="sb-badge exam">10M</span></div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">2022–23</div>
+      <div class="sb-item" onclick="showPYQSec('pyq2223orange',this,'pyqSidebar')"><span class="sb-num">●</span><span class="sb-label">Set Orange</span><span class="sb-badge exam">80M</span></div>
+      <div class="sb-item" onclick="showPYQSec('pyq2223pink',this,'pyqSidebar')"><span class="sb-num">●</span><span class="sb-label">Set Pink</span><span class="sb-badge exam">80M</span></div>
+      <div class="sb-item" onclick="showPYQSec('pyq2223yellow',this,'pyqSidebar')"><span class="sb-num">●</span><span class="sb-label">Set Yellow</span><span class="sb-badge exam">80M</span></div>
+      <div class="sb-item" onclick="showPYQSec('pyq2223makeup',this,'pyqSidebar')"><span class="sb-num">●</span><span class="sb-label">Makeup Test</span><span class="sb-badge">80M</span></div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">2023–24</div>
+      <div class="sb-item" onclick="showPYQSec('pyq2324orange',this,'pyqSidebar')"><span class="sb-num">◆</span><span class="sb-label">Set Orange</span><span class="sb-badge exam">77M</span></div>
+      <div class="sb-item" onclick="showPYQSec('pyq2324pink',this,'pyqSidebar')"><span class="sb-num">◆</span><span class="sb-label">Set Pink</span><span class="sb-badge exam">77M</span></div>
+      <div class="sb-item" onclick="showPYQSec('pyq2324yellow',this,'pyqSidebar')"><span class="sb-num">◆</span><span class="sb-label">Set Yellow</span><span class="sb-badge exam">77M</span></div>
+      <div class="sb-item" onclick="showPYQSec('pyq2324makeup',this,'pyqSidebar')"><span class="sb-num">◆</span><span class="sb-label">Makeup 23-24</span><span class="sb-badge">77M</span></div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Analysis</div>
+      <div class="sb-item" onclick="showPYQSec('pyqpatterns',this,'pyqSidebar')"><span class="sb-num">→</span><span class="sb-label">Recurring Topics</span><span class="sb-badge hot">KEY</span></div>
+    </div>
+  </nav>
+  <div class="content-area" id="pyqContent">
+
+    <div class="content-sec active" id="pyq2122">
+      <div class="pyq-hero">
+        <div class="eyebrow"><div class="eyebrow-line" style="background:var(--rust)"></div><div class="eyebrow-text">2021–22 · OAC Lab Test · Q1</div></div>
+        <div class="pyq-title">Pizza Store<br><span class="hl">Management</span></div>
+        <div class="pyq-desc">Multi-file struct project. Implement a pizza store system using structures, multiple .c/.h files, and two shell scripts for sorting in ascending and descending order of price.</div>
+      </div>
+      <div class="pyq-section">
+        <div class="pyq-q-card open">
+          <div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q1</div><div class="pyq-q-title">Pizza Store — Struct + Multi-file + Shell Scripts</div><div class="pyq-q-marks">30 marks</div><div class="pyq-q-chevron">▼</div></div>
+          <div class="pyq-q-body">
+            <div class="pyq-q-desc">Build a pizza store system. Each pizza has: <strong>pid</strong> (int), <strong>type</strong> (int), <strong>price</strong> (float), <strong>base</strong> (int). Six files: <ic>pizza.h</ic>, <ic>pizza_prop.c</ic>, <ic>pizza_menu.c</ic>, <ic>pizza_menuNew.c</ic>, <ic>pizza_menu.h</ic>, <ic>main_pizza.c</ic>.<br><br>• Implement functions in <ic>pizza_prop.c</ic> and <ic>pizza_menu.c</ic> as per header specs [6+9]<br>• <ic>pizza_menuNew.c</ic>: same as <ic>pizza_menu.c</ic> but sorts descending [9]<br>• Create <ic>myScriptOne.sh</ic> (ascending) and <ic>myScriptTwo.sh</ic> (descending) [3+3]</div>
+            <div class="sample-label">Sample Output (ascending)</div>
+            <div class="pyq-sample">Provide the number of pizzas: 4
+Pizza Menu after Sorting (ascending by price):
+ID: 1003, Price: 189.91
+ID: 1004, Price: 278.45
+ID: 1001, Price: 453.26
+ID: 1002, Price: 857.93</div>
+            <div class="pyq-insight"><span class="ii">INSIGHT</span><span>Classic pattern: struct project with add/display/sort. Shell scripts: rm -f *.o → gcc -c each .c → gcc -o to link → run. Sort differs only in &lt; vs &gt; operator.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-sec" id="pyq2122q2">
+      <div class="pyq-hero">
+        <div class="eyebrow"><div class="eyebrow-line" style="background:var(--rust)"></div><div class="eyebrow-text">2021–22 · OAC Lab Test · Q2</div></div>
+        <div class="pyq-title">Half Pyramid<br><span class="hl">Pattern (Pointers)</span></div>
+      </div>
+      <div class="pyq-section">
+        <div class="pyq-q-card open">
+          <div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q2</div><div class="pyq-q-title">Pattern Printing — Half Pyramid using Pointer Arithmetic Only</div><div class="pyq-q-marks">10 marks</div><div class="pyq-q-chevron">▼</div></div>
+          <div class="pyq-q-body">
+            <div class="pyq-q-desc">Print a 2D array and then its elements in a half pyramid. <strong>Pointer arithmetic only</strong> — no <ic>arr[i][j]</ic> indexing allowed.</div>
+            <div class="sample-label">Pattern for n=5</div>
+            <div class="pyq-sample">Full array:         Half pyramid:
+1  2  3  4  5       1
+6  7  8  9  10      6  7
+11 12 13 14 15      11 12 13
+16 17 18 19 20      16 17 18 19
+21 22 23 24 25      21 22 23 24 25</div>
+            <div class="pyq-insight"><span class="ii">INSIGHT</span><span>Row i prints columns 0 to i. Use <ic>*(*(arr+i)+j)</ic> instead of <ic>arr[i][j]</ic>.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-sec" id="pyq2223orange">
+      <div class="pyq-hero">
+        <div class="eyebrow"><div class="eyebrow-line" style="background:var(--rust)"></div><div class="eyebrow-text">2022–23 · Set Orange · June 2023</div></div>
+        <div class="pyq-title">Array Rotation · Linked Lists<br><span class="hl">& Patterns</span></div>
+        <div class="pyq-desc">3 questions, 80 marks. Q1: Array rotation (both directions). Q2: Linked list common elements. Q3: Diamond pattern.</div>
+      </div>
+      <div class="pyq-section">
+        <div class="pyq-q-card open"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q1</div><div class="pyq-q-title">Rotate Array — Clockwise/Anti-clockwise by rotateBy</div><div class="pyq-q-marks">30M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Implement <ic>void rotateArray(int arr[], int n, int rotateBy)</ic>. Positive = clockwise (right), negative = anti-clockwise (left).</div><div class="sample-label">Samples</div><div class="pyq-sample">n=5, [2,3,5,1,4], rotateBy=3  → [5,1,4,2,3]
+n=5, [2,3,5,1,4], rotateBy=17 → [1,4,2,3,5]
+n=5, [2,3,5,1,4], rotateBy=-4 → [4,2,3,5,1]</div><div class="pyq-insight"><span class="ii">INSIGHT</span><span><ic>rotateBy = ((rotateBy % n) + n) % n</ic> handles all edge cases including negative and large values.</span></div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q2</div><div class="pyq-q-title">Linked List — Common Elements of Two Lists</div><div class="pyq-q-marks">30M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Implement <ic>insertNodeEnd</ic> and <ic>printCommonElements</ic>. Returns head of a new linked list with all elements present in both lists.</div><div class="sample-label">Sample</div><div class="pyq-sample">List 1: 1 2 3,  List 2: 2 3 4 5
+Common: 2 3</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q3</div><div class="pyq-q-title">Diamond Pattern Printing</div><div class="pyq-q-marks">20M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Implement <ic>void pattern(int n)</ic> to print a hollow diamond. No extra printf statements besides the pattern itself.</div><div class="sample-label">n=5</div><div class="pyq-sample">    *
+   **
+  * *
+ *  *
+*   *
+ *  *
+  * *
+   **
+    *</div></div></div>
+      </div>
+    </div>
+
+    <div class="content-sec" id="pyq2223pink">
+      <div class="pyq-hero">
+        <div class="eyebrow"><div class="eyebrow-line" style="background:var(--rust)"></div><div class="eyebrow-text">2022–23 · Set Pink · June 2023</div></div>
+        <div class="pyq-title">Nearest Smaller · Linked List<br><span class="hl">Middle & X Pattern</span></div>
+      </div>
+      <div class="pyq-section">
+        <div class="pyq-q-card open"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q1</div><div class="pyq-q-title">Array — Nearest Smaller Element for Each Position</div><div class="pyq-q-marks">20M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Implement <ic>int* minarray(int A[], int n)</ic> — returns an array where each element is the nearest smaller element to its left, or -1 if none exists.</div><div class="sample-label">Sample</div><div class="pyq-sample">Input:  1 3 2 4 5
+Output: -1 1 1 2 4</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q2</div><div class="pyq-q-title">Linked List — Find Middle Element (Single Pass)</div><div class="pyq-q-marks">30M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Implement <ic>findMiddle()</ic>. You may traverse the list <strong>only once</strong>. Zero marks for multiple traversals.</div><div class="pyq-insight"><span class="ii">INSIGHT</span><span>Slow/fast pointer: slow moves 1 step, fast moves 2. When fast reaches end, slow is at middle.</span></div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q3</div><div class="pyq-q-title">X/Hourglass Pattern Printing</div><div class="pyq-q-marks">30M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="sample-label">n=5 — mirrored X</div><div class="pyq-sample">*   *
+ * *
+  *
+ * *
+*   *
+*   *
+ * *
+  *
+ * *
+*   *</div></div></div>
+      </div>
+    </div>
+
+    <div class="content-sec" id="pyq2223yellow">
+      <div class="pyq-hero">
+        <div class="eyebrow"><div class="eyebrow-line" style="background:var(--rust)"></div><div class="eyebrow-text">2022–23 · Set Yellow · June 2023</div></div>
+        <div class="pyq-title">Median of Two Arrays · Reverse List<br><span class="hl">& V Pattern</span></div>
+      </div>
+      <div class="pyq-section">
+        <div class="pyq-q-card open"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q1</div><div class="pyq-q-title">Median of Two Sorted Arrays (merged)</div><div class="pyq-q-marks">30M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Implement <ic>int findMedian(int arr1[], int size1, int arr2[], int size2)</ic>. Merge both sorted arrays and return the median. Inputs are guaranteed sorted.</div><div class="pyq-insight"><span class="ii">INSIGHT</span><span>Merge arrays (merge-sort style), find median at (n1+n2)/2 for odd total, average of two middles for even.</span></div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q2</div><div class="pyq-q-title">Reverse a Linked List</div><div class="pyq-q-marks">30M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-insight"><span class="ii">INSIGHT</span><span>Three-pointer approach: prev=NULL, curr=head, next. Loop: save next, curr→next = prev, advance prev and curr. Return prev as new head.</span></div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q3</div><div class="pyq-q-title">V/Chevron Pattern</div><div class="pyq-q-marks">20M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="sample-label">n=5</div><div class="pyq-sample">    *
+   * *
+  *   *
+ *     *
+*       *
+ *     *
+  *   *
+   * *
+    *</div></div></div>
+      </div>
+    </div>
+
+    <div class="content-sec" id="pyq2223makeup">
+      <div class="pyq-hero">
+        <div class="eyebrow"><div class="eyebrow-line" style="background:var(--rust)"></div><div class="eyebrow-text">2022–23 · Makeup Test · July 2023</div></div>
+        <div class="pyq-title">Subset Check · Sorted Insert<br><span class="hl">& Letter Pattern</span></div>
+      </div>
+      <div class="pyq-section">
+        <div class="pyq-q-card open"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q1</div><div class="pyq-q-title">Array — Check if Arr2 is Subset of Arr1</div><div class="pyq-q-marks">20M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Implement <ic>int isSubset(int Arr1[], int Arr2[], int n1, int n2)</ic>. Return 1 if every element of Arr2 exists in Arr1, else 0.</div><div class="sample-label">Sample</div><div class="pyq-sample">Arr1: 1 3 2 4 5, Arr2: 1 4 5 → "Arr2 is subset"
+Arr1: 3 4 -1 0 2, Arr2: 3 -1 -2 → "not a subset"</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q2</div><div class="pyq-q-title">Linked List — Sorted Insert</div><div class="pyq-q-marks">30M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Implement <ic>sortedInsert(head, new_data)</ic> — insert data at correct position to maintain sorted order.</div><div class="sample-label">Sample</div><div class="pyq-sample">Input: 5 4 6 → Printed: 4 5 6</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q3</div><div class="pyq-q-title">Letter Pattern — Alternating Rows</div><div class="pyq-q-marks">30M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Pattern uses <strong>letters</strong>, not stars. Implement <ic>void pattern(int n)</ic>.</div><div class="sample-label">n=5</div><div class="pyq-sample">A B C D E F G H I
+A
+G
+A
+E
+A
+C
+A</div><div class="pyq-insight"><span class="ii">INSIGHT</span><span>First line: print A to chr(A+2n-2). Alternating rows: odd rows = 'A', even rows = chr(A+2n-2-row).</span></div></div></div>
+      </div>
+    </div>
+
+    <div class="content-sec" id="pyq2324orange">
+      <div class="pyq-hero">
+        <div class="eyebrow"><div class="eyebrow-line" style="background:var(--rust)"></div><div class="eyebrow-text">2023–24 · Set Orange · Nov 2023</div></div>
+        <div class="pyq-title">7 Questions · Pointers, Arrays,<br><span class="hl">Matrix & Polynomials</span></div>
+        <div class="pyq-desc">Binary-marked (11M each). Questions must be perfect for full marks.</div>
+      </div>
+      <div class="pyq-section">
+        <div class="pyq-q-card open"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q1</div><div class="pyq-q-title">Sort 3 Numbers Using Pointers (ascending)</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Implement <ic>void aSort(int a, int b, int c, int *n1, int *n2, int *n3)</ic>. Store smallest in *n1, middle in *n2, largest in *n3.</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q2</div><div class="pyq-q-title">Minimum Euclidean Distance Among n Points</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Find minimum Euclidean distance: <ic>√[(x₂–x₁)² + (y₂–y₁)²]</ic>. Use pow() and sqrt() from math.h. Output to 2 decimal places.</div><div class="pyq-insight"><span class="ii">INSIGHT</span><span>Nested loop O(n²) comparing all pairs. <ic>dist = sqrt(pow(x2-x1,2) + pow(y2-y1,2))</ic>.</span></div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q3</div><div class="pyq-q-title">Right Rotate Array by rotateBy positions</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Implement <ic>rotateArray</ic> — modify array in-place, no return value needed.</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q4</div><div class="pyq-q-title">Remove Adjacent Duplicates from String</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Implement <ic>removeDuplicates(char str[])</ic>. "Hello World" → "Helo World" (adjacent 'll' → 'l').</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q5</div><div class="pyq-q-title">Rotate Matrix 90° Clockwise</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-insight"><span class="ii">INSIGHT</span><span>Step 1: Transpose (swap mat[i][j] ↔ mat[j][i]). Step 2: Reverse each row.</span></div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q6+7</div><div class="pyq-q-title">Polynomial Addition & Coefficient Interchange (Linked List)</div><div class="pyq-q-marks">22M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Polynomial terms as linked list nodes (coefficient + exponent). Implement addPolynomials and interchangeCoefficients. Input until "0 0".</div></div></div>
+      </div>
+    </div>
+
+    <div class="content-sec" id="pyq2324pink">
+      <div class="pyq-hero">
+        <div class="eyebrow"><div class="eyebrow-line" style="background:var(--rust)"></div><div class="eyebrow-text">2023–24 · Set Pink · Nov 2023</div></div>
+        <div class="pyq-title">Descending Sort · Minkowski<br><span class="hl">Left Rotate & Matrix 270°</span></div>
+      </div>
+      <div class="pyq-section">
+        <div class="pyq-q-card open"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q1</div><div class="pyq-q-title">Sort 3 Numbers Descending (Pointers)</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Implement <ic>void dSort(int a, int b, int c, int *n1, int *n2, int *n3)</ic>. Store greatest in *n1, middle in *n2, smallest in *n3.</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q2</div><div class="pyq-q-title">Minimum Minkowski Distance Among n Points</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Minkowski Distance = <ic>[|x₂–x₁|ᵖ + |y₂–y₁|ᵖ]^(1/p)</ic>. Use pow() and fabs() from math.h.</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q3</div><div class="pyq-q-title">Left Rotate Array by rotateBy positions</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Same as right rotate but in opposite direction. Modify array in-place.</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q5</div><div class="pyq-q-title">Rotate Matrix 270° Clockwise</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-insight"><span class="ii">INSIGHT</span><span>270° CW = 90° CCW = Transpose + Reverse each column.</span></div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q6+7</div><div class="pyq-q-title">Subtract Polynomials & Reverse Coefficients</div><div class="pyq-q-marks">22M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">subtractPolynomials (poly1 - poly2) and interchangeCoefficients (reverse coefficient values of poly1).</div></div></div>
+      </div>
+    </div>
+
+    <div class="content-sec" id="pyq2324yellow">
+      <div class="pyq-hero">
+        <div class="eyebrow"><div class="eyebrow-line" style="background:var(--rust)"></div><div class="eyebrow-text">2023–24 · Set Yellow · Nov 2023</div></div>
+        <div class="pyq-title">Collinearity · Unique Elements,<br><span class="hl">Matrix Multiply & Polynomial</span></div>
+      </div>
+      <div class="pyq-section">
+        <div class="pyq-q-card open"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q1</div><div class="pyq-q-title">Find Largest and Smallest of 4 Numbers (Pointers)</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Implement <ic>findLargestAndSmallest(a,b,c,d,*largest,*smallest)</ic>. Pass by reference.</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q2</div><div class="pyq-q-title">Check if N Points are Collinear</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">All slopes between consecutive points must be equal: slope = (y2-y1)/(x2-x1). Return 1 if collinear, else 0.</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q3</div><div class="pyq-q-title">Count Unique Elements in Array</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">A unique element appears exactly once. Count and return how many such elements exist.</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q5</div><div class="pyq-q-title">Multiply Two Square Matrices</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Standard matrix multiplication. result[i][j] = sum of row i × column j.</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q6+7</div><div class="pyq-q-title">Polynomial Multiplication & Reverse</div><div class="pyq-q-marks">22M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Multiply two polynomials (each term of poly1 × each term of poly2, combine matching exponents). Reverse order of poly1's terms.</div></div></div>
+      </div>
+    </div>
+
+    <div class="content-sec" id="pyq2324makeup">
+      <div class="pyq-hero">
+        <div class="eyebrow"><div class="eyebrow-line" style="background:var(--rust)"></div><div class="eyebrow-text">2023–24 · Makeup Test · Dec 2023</div></div>
+        <div class="pyq-title">Range Rotation · Pivot Index<br><span class="hl">& Merge Sorted Lists</span></div>
+      </div>
+      <div class="pyq-section">
+        <div class="pyq-q-card open"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q1</div><div class="pyq-q-title">Rotate Array Within a Given Range [start, end]</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Rotate only elements within [start, end] range clockwise by rotateBy. Elements outside remain unchanged.</div><div class="sample-label">Sample</div><div class="pyq-sample">Array: 1 2 3 4 5, rotateBy=2, range=[1,3]
+Result: 1 4 3 2 5</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q4</div><div class="pyq-q-title">Pivot Index — Left Sum Equals Right Sum</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Return leftmost index where sum of all elements to its left equals sum of all elements to its right. Return -1 if none.</div><div class="sample-label">Sample</div><div class="pyq-sample">Array: 3 0 1 0 2 → Pivot: 1 (3 == 1+0+2)</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q5</div><div class="pyq-q-title">3×3 Matrix Determinant</div><div class="pyq-q-marks">11M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">det(A) = a11(a22·a33 – a23·a32) – a12(a21·a33 – a23·a31) + a13(a21·a32 – a22·a31)</div></div></div>
+        <div class="pyq-q-card"><div class="pyq-q-head" onclick="togglePYQCard(this)"><div class="pyq-q-num">Q6+7</div><div class="pyq-q-title">Insert in Sorted Order + Merge Two Sorted Linked Lists</div><div class="pyq-q-marks">22M</div><div class="pyq-q-chevron">▼</div></div><div class="pyq-q-body"><div class="pyq-q-desc">Build two sorted linked lists using insertInSortedOrder, then merge them into a single sorted list.</div><div class="sample-label">Sample</div><div class="pyq-sample">List1: 50→97→101, List2: 20→77→89→103→305
+Merged: 20→50→77→89→97→101→103→305</div></div></div>
+      </div>
+    </div>
+
+    <div class="content-sec" id="pyqpatterns">
+      <div class="pyq-hero">
+        <div class="eyebrow"><div class="eyebrow-line" style="background:var(--gold)"></div><div class="eyebrow-text" style="color:var(--gold)">Pattern Analysis — 3 Years of Tests</div></div>
+        <div class="pyq-title">What <span style="color:var(--gold);font-style:italic">Always</span> Shows Up</div>
+        <div class="pyq-desc">Based on 2021–22, 2022–23, and 2023–24 papers. These topics appear in every test without exception.</div>
+      </div>
+      <div class="pyq-section">
+        <div class="card" style="margin-bottom:14px"><div class="card-head"><div class="ch-dot ch-rust"></div><div class="card-title">Guaranteed Every Year</div></div><div class="card-body"><ul class="concept-list">
+          <li><strong>Array Rotation</strong> — right/left/both directions, handle wraparound with modulo. Every single set.</li>
+          <li><strong>Pattern Printing</strong> — diamond, V-shape, X-pattern, letter patterns. One pattern every test.</li>
+          <li><strong>Linked List Operations</strong> — insert at end, reverse, find middle, sorted insert, common elements, merge. Usually 30M.</li>
+          <li><strong>Struct + Multi-file Project</strong> — 21-22 was entirely this. Add/display/sort on array of structs.</li>
+          <li><strong>Pointer-based Functions</strong> — pass by reference, return multiple values. 23-24 had this as Q1.</li>
+          <li><strong>Matrix Operations</strong> — rotate 90°/270°, multiply, determinant. Very likely to appear.</li>
+        </ul></div></div>
+        <div class="card"><div class="card-head"><div class="ch-dot ch-gold"></div><div class="card-title">Key Techniques to Know Cold</div></div><div class="card-body"><table class="cmd-tbl">
+          <tr><td>Array rotation formula</td><td><ic>k = ((rotateBy % n) + n) % n</ic></td></tr>
+          <tr><td>Linked list reverse</td><td>Three pointers: prev, curr, next</td></tr>
+          <tr><td>Find middle of list</td><td>Slow/fast pointer technique</td></tr>
+          <tr><td>Matrix 90° CW</td><td>Transpose + reverse each row</td></tr>
+          <tr><td>Matrix 270° CW</td><td>Transpose + reverse each column</td></tr>
+          <tr><td>Shell script pattern</td><td>rm -f *.o → gcc -c → gcc -o → ./exe</td></tr>
+          <tr><td>Struct sort</td><td>Selection sort comparing struct field</td></tr>
+        </table></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════ WINDOW 3: EXPECTED QUESTIONS ══════════════════ -->
+<div class="window-panel" id="win-expected">
+  <nav class="sidebar" id="eqSidebar">
+    <div class="sb-group">
+      <div class="sb-group-label">By Topic</div>
+      <div class="sb-item active" onclick="showEQSec('eqall',this,'eqSidebar');filterEQ('')"><span class="sb-num">~</span><span class="sb-label">All Questions</span></div>
+      <div class="sb-item" onclick="showEQSec('eqall',this,'eqSidebar');filterEQ('arrays')"><span class="sb-num">1</span><span class="sb-label">Array Rotation</span><span class="sb-badge exam">likely</span></div>
+      <div class="sb-item" onclick="showEQSec('eqall',this,'eqSidebar');filterEQ('struct')"><span class="sb-num">2</span><span class="sb-label">Grocery Store</span><span class="sb-badge exam">likely</span></div>
+      <div class="sb-item" onclick="showEQSec('eqall',this,'eqSidebar');filterEQ('pattern')"><span class="sb-num">3</span><span class="sb-label">Star Pattern</span><span class="sb-badge exam">likely</span></div>
+      <div class="sb-item" onclick="showEQSec('eqall',this,'eqSidebar');filterEQ('pointer')"><span class="sb-num">4</span><span class="sb-label">Pointer Functions</span><span class="sb-badge hot">hot</span></div>
+      <div class="sb-item" onclick="showEQSec('eqall',this,'eqSidebar');filterEQ('string')"><span class="sb-num">5</span><span class="sb-label">String Operations</span><span class="sb-badge hot">hot</span></div>
+      <div class="sb-item" onclick="showEQSec('eqall',this,'eqSidebar');filterEQ('matrix')"><span class="sb-num">6</span><span class="sb-label">Matrix Rotation</span><span class="sb-badge exam">likely</span></div>
+      <div class="sb-item" onclick="showEQSec('eqall',this,'eqSidebar');filterEQ('search')"><span class="sb-num">7</span><span class="sb-label">Subset / Search</span><span class="sb-badge new-b">new</span></div>
+      <div class="sb-item" onclick="showEQSec('eqall',this,'eqSidebar');filterEQ('dynamic')"><span class="sb-num">8</span><span class="sb-label">Dynamic Array</span><span class="sb-badge new-b">new</span></div>
+    </div>
+    <div class="sb-group">
+      <div class="sb-group-label">Difficulty</div>
+      <div class="diff-badge diff-easy" style="padding:6px 14px"><div class="diff-dot"></div>Easy</div>
+      <div class="diff-badge diff-med" style="padding:6px 14px"><div class="diff-dot"></div>Medium</div>
+      <div class="diff-badge diff-hard" style="padding:6px 14px"><div class="diff-dot"></div>Hard</div>
+    </div>
+  </nav>
+  <div class="content-area" id="eqContent">
+    <div class="content-sec active" id="eqall">
+      <div class="eq-hero">
+        <div class="eyebrow"><div class="eyebrow-line" style="background:var(--olive)"></div><div class="eyebrow-text" style="color:var(--olive)">Expected Questions with Full Solutions</div></div>
+        <div class="eq-title">12 Questions<br>to <span class="hl">Prepare Well</span></div>
+        <div class="eq-desc">Based on PYQ patterns. Each question has the full problem statement, hints, and complete solution code. Click "Show Solution" to reveal.</div>
+        <div class="difficulty-row">
+          <div class="diff-badge diff-easy"><div class="diff-dot"></div>Easy (1–4)</div>
+          <div class="diff-badge diff-med"><div class="diff-dot"></div>Medium (5–10)</div>
+          <div class="diff-badge diff-hard"><div class="diff-dot"></div>Hard (11–12)</div>
+        </div>
+      </div>
+      <div class="eq-section" id="eqCards">
+
+        <!-- EQ 1 -->
+        <div class="eq-card" data-tags="arrays">
+          <div class="eq-head" onclick="toggleEQ(this)"><div class="eq-num">01</div><div class="eq-meta"><div class="eq-qtitle">Right Rotate Array by K Positions</div><div class="eq-tags-row"><span class="eq-tag">arrays</span><span class="eq-tag">modulo</span><span class="eq-tag">in-place</span></div></div><div class="eq-right"><div class="diff-pill d-easy">EASY</div><div class="sol-btn"><span class="sol-icon">▼</span>Show Solution</div></div></div>
+          <div class="eq-body"><div class="eq-tabs"><div class="eq-tab active" onclick="switchEQTab(this)">Problem</div><div class="eq-tab" onclick="switchEQTab(this)">Solution</div><div class="eq-tab" onclick="switchEQTab(this)">Key Insight</div></div>
+          <div class="eq-tab-content active"><div class="eq-problem">Implement <ic>void rotateArray(int arr[], int n, int rotateBy)</ic> that rotates the array to the right by <ic>rotateBy</ic> positions in-place.</div><div class="pyq-sample">arr=[1,2,3,4,5], rotateBy=2 → [4,5,1,2,3]
+arr=[10,20,30,40], rotateBy=18 → [30,40,10,20]</div><div class="eq-hint"><strong>Hint:</strong> Normalize k = rotateBy % n. Use the three-reversal trick: reverse [0..n-k-1], reverse [n-k..n-1], reverse whole.</div></div>
+          <div class="eq-tab-content"><div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">f1.c</span></div><div class="sol-code"><span class="tp">void</span> <span class="fn">reverse</span>(<span class="tp">int</span> arr[], <span class="tp">int</span> lo, <span class="tp">int</span> hi) {
+    <span class="kw">while</span>(lo <span class="op">&lt;</span> hi) {
+        <span class="tp">int</span> tmp = arr[lo];
+        arr[lo<span class="op">++</span>] = arr[hi];
+        arr[hi<span class="op">--</span>] = tmp;
+    }
+}
+<span class="tp">void</span> <span class="fn">rotateArray</span>(<span class="tp">int</span> arr[], <span class="tp">int</span> n, <span class="tp">int</span> rotateBy) {
+    rotateBy = rotateBy <span class="op">%</span> n;
+    <span class="kw">if</span>(rotateBy <span class="op">==</span> <span class="nm">0</span>) <span class="kw">return</span>;
+    <span class="fn">reverse</span>(arr, <span class="nm">0</span>, n<span class="op">-</span>rotateBy<span class="op">-</span><span class="nm">1</span>);
+    <span class="fn">reverse</span>(arr, n<span class="op">-</span>rotateBy, n<span class="op">-</span><span class="nm">1</span>);
+    <span class="fn">reverse</span>(arr, <span class="nm">0</span>, n<span class="op">-</span><span class="nm">1</span>);
+}</div></div></div>
+          <div class="eq-tab-content"><div class="key-insight-box"><div class="ki-title">Key Insights</div><ul class="ki-list"><li>Right rotate by k = last k elements go to front. [1,2,3,4,5] rotated right 2 = [4,5,1,2,3]</li><li>Always normalize: <ic>k = rotateBy % n</ic> before anything else</li><li>Three-reversal works: reverse left partition, right partition, then whole array</li></ul></div></div></div>
+        </div>
+
+        <!-- EQ 2 -->
+        <div class="eq-card" data-tags="struct">
+          <div class="eq-head" onclick="toggleEQ(this)"><div class="eq-num">02</div><div class="eq-meta"><div class="eq-qtitle">Grocery Store — Struct + Multi-file + Shell Script</div><div class="eq-tags-row"><span class="eq-tag">struct</span><span class="eq-tag">multi-file</span><span class="eq-tag">sort</span></div></div><div class="eq-right"><div class="diff-pill d-med">MEDIUM</div><div class="sol-btn"><span class="sol-icon">▼</span>Show Solution</div></div></div>
+          <div class="eq-body"><div class="eq-tabs"><div class="eq-tab active" onclick="switchEQTab(this)">Problem</div><div class="eq-tab" onclick="switchEQTab(this)">Solution</div><div class="eq-tab" onclick="switchEQTab(this)">Key Insight</div></div>
+          <div class="eq-tab-content active"><div class="eq-problem">Build a grocery store system. Each ITEM has: <strong>itemID</strong> (int), <strong>name</strong> (char[30]), <strong>quantity</strong> (int), <strong>price</strong> (float). Implement addItem, displayAll, sortByPrice (ascending). Shell script compiles all and runs.</div><div class="pyq-sample">After sorting by price:
+ID:102 Name:Bread Price:30.00
+ID:101 Name:Milk  Price:45.50
+ID:103 Name:Eggs  Price:60.00</div></div>
+          <div class="eq-tab-content"><div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">item.h</span></div><div class="sol-code"><span class="mc">#ifndef</span> ITEM_H
+<span class="mc">#define</span> ITEM_H
+<span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="tp">int</span>   itemID;
+    <span class="tp">char</span>  name[<span class="nm">30</span>];
+    <span class="tp">int</span>   quantity;
+    <span class="tp">float</span> price;
+} ITEM;
+<span class="tp">void</span> <span class="fn">printItem</span>(ITEM item);
+<span class="mc">#endif</span></div></div>
+          <div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">store.c</span></div><div class="sol-code"><span class="tp">void</span> <span class="fn">sortByPrice</span>() {
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span>count<span class="op">-</span><span class="nm">1</span>; i<span class="op">++</span>) {
+        <span class="tp">int</span> minIdx = i;
+        <span class="kw">for</span>(<span class="tp">int</span> j=i<span class="op">+</span><span class="nm">1</span>; j<span class="op">&lt;</span>count; j<span class="op">++</span>)
+            <span class="kw">if</span>(catalog[j].price <span class="op">&lt;</span> catalog[minIdx].price)
+                minIdx = j;
+        ITEM tmp = catalog[i];
+        catalog[i] = catalog[minIdx];
+        catalog[minIdx] = tmp;
+    }
+}</div></div>
+          <div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">myScript.sh</span></div><div class="sol-code">rm -f *.o store_exe
+gcc -c item.c
+gcc -c store.c
+gcc -c main.c
+gcc -o store_exe item.o store.o main.o
+./store_exe</div></div></div>
+          <div class="eq-tab-content"><div class="key-insight-box"><div class="ki-title">Key Insights</div><ul class="ki-list"><li>Every struct test: .h has struct typedef + function declarations with #ifndef guards</li><li>Global array + count variable declared with extern in header, defined once in .c</li><li>Sort: selection sort comparing catalog[j].price &lt; catalog[minIdx].price</li><li>Shell script: rm old → gcc -c each → gcc -o to link → run</li></ul></div></div></div>
+        </div>
+
+        <!-- EQ 3 -->
+        <div class="eq-card" data-tags="pattern">
+          <div class="eq-head" onclick="toggleEQ(this)"><div class="eq-num">03</div><div class="eq-meta"><div class="eq-qtitle">Hollow Diamond Pattern — Any N</div><div class="eq-tags-row"><span class="eq-tag">pattern</span><span class="eq-tag">nested loops</span></div></div><div class="eq-right"><div class="diff-pill d-easy">EASY</div><div class="sol-btn"><span class="sol-icon">▼</span>Show Solution</div></div></div>
+          <div class="eq-body"><div class="eq-tabs"><div class="eq-tab active" onclick="switchEQTab(this)">Problem</div><div class="eq-tab" onclick="switchEQTab(this)">Solution</div><div class="eq-tab" onclick="switchEQTab(this)">Key Insight</div></div>
+          <div class="eq-tab-content active"><div class="eq-problem">Given n, print a hollow diamond pattern (n rows going down, n-1 rows going back up = 2n-1 total rows).</div><div class="pyq-sample">n=5:
+    *
+   * *
+  *   *
+ *     *
+*       *
+ *     *
+  *   *
+   * *
+    *</div></div>
+          <div class="eq-tab-content"><div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">f3.c</span></div><div class="sol-code"><span class="tp">void</span> <span class="fn">printRow</span>(<span class="tp">int</span> i, <span class="tp">int</span> n) {
+    <span class="kw">for</span>(<span class="tp">int</span> j=<span class="nm">0</span>; j<span class="op">&lt;</span>n<span class="op">-</span>i; j<span class="op">++</span>) <span class="fn">printf</span>(<span class="str">" "</span>);
+    <span class="kw">if</span>(i==<span class="nm">1</span>) { <span class="fn">printf</span>(<span class="str">"*"</span>); }
+    <span class="kw">else</span> {
+        <span class="fn">printf</span>(<span class="str">"*"</span>);
+        <span class="kw">for</span>(<span class="tp">int</span> k=<span class="nm">0</span>; k<span class="op">&lt;</span><span class="nm">2</span><span class="op">*</span>i<span class="op">-</span><span class="nm">3</span>; k<span class="op">++</span>) <span class="fn">printf</span>(<span class="str">" "</span>);
+        <span class="fn">printf</span>(<span class="str">"*"</span>);
+    }
+    <span class="fn">printf</span>(<span class="str">"\n"</span>);
+}
+<span class="tp">void</span> <span class="fn">pattern</span>(<span class="tp">int</span> n) {
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">1</span>; i<span class="op">&lt;=</span>n; i<span class="op">++</span>) <span class="fn">printRow</span>(i, n);
+    <span class="kw">for</span>(<span class="tp">int</span> i=n<span class="op">-</span><span class="nm">1</span>; i<span class="op">&gt;=</span><span class="nm">1</span>; i<span class="op">--</span>) <span class="fn">printRow</span>(i, n);
+}</div></div></div>
+          <div class="eq-tab-content"><div class="key-insight-box"><div class="ki-title">Key Insights</div><ul class="ki-list"><li>Row i: (n-i) leading spaces, then * and (2i-3) spaces and * (or just * for i=1)</li><li>Bottom half mirrors top exactly — loop from n-1 down to 1</li><li>Total rows = 2n-1. Middle row is row n (widest)</li></ul></div></div></div>
+        </div>
+
+        <!-- EQ 4 -->
+        <div class="eq-card" data-tags="pointer">
+          <div class="eq-head" onclick="toggleEQ(this)"><div class="eq-num">04</div><div class="eq-meta"><div class="eq-qtitle">Sort 3 Numbers Via Pointers</div><div class="eq-tags-row"><span class="eq-tag">pointer</span><span class="eq-tag">pass-by-reference</span></div></div><div class="eq-right"><div class="diff-pill d-easy">EASY</div><div class="sol-btn"><span class="sol-icon">▼</span>Show Solution</div></div></div>
+          <div class="eq-body"><div class="eq-tabs"><div class="eq-tab active" onclick="switchEQTab(this)">Problem</div><div class="eq-tab" onclick="switchEQTab(this)">Solution</div><div class="eq-tab" onclick="switchEQTab(this)">Key Insight</div></div>
+          <div class="eq-tab-content active"><div class="eq-problem">Implement <ic>void aSort(int a, int b, int c, int *n1, int *n2, int *n3)</ic> where *n1 = smallest, *n2 = middle, *n3 = largest.</div><div class="pyq-sample">Enter a b c: 20 10 30 → 10 20 30</div></div>
+          <div class="eq-tab-content"><div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">f1.c</span></div><div class="sol-code"><span class="tp">void</span> <span class="fn">aSort</span>(<span class="tp">int</span> a, <span class="tp">int</span> b, <span class="tp">int</span> c,
+           <span class="tp">int</span> <span class="op">*</span>n1, <span class="tp">int</span> <span class="op">*</span>n2, <span class="tp">int</span> <span class="op">*</span>n3) {
+    <span class="tp">int</span> arr[<span class="nm">3</span>] = {a, b, c};
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span><span class="nm">2</span>; i<span class="op">++</span>)
+        <span class="kw">for</span>(<span class="tp">int</span> j=<span class="nm">0</span>; j<span class="op">&lt;</span><span class="nm">2</span><span class="op">-</span>i; j<span class="op">++</span>)
+            <span class="kw">if</span>(arr[j] <span class="op">&gt;</span> arr[j<span class="op">+</span><span class="nm">1</span>]) {
+                <span class="tp">int</span> t=arr[j]; arr[j]=arr[j<span class="op">+</span><span class="nm">1</span>]; arr[j<span class="op">+</span><span class="nm">1</span>]=t;
+            }
+    <span class="op">*</span>n1=arr[<span class="nm">0</span>]; <span class="op">*</span>n2=arr[<span class="nm">1</span>]; <span class="op">*</span>n3=arr[<span class="nm">2</span>];
+}</div></div></div>
+          <div class="eq-tab-content"><div class="key-insight-box"><div class="ki-title">Key Insights</div><ul class="ki-list"><li>Assign to <ic>*n1</ic> (dereference), not <ic>n1</ic> — otherwise you just change the local pointer</li><li>Standard "return multiple values" pattern — appears in nearly every 23-24 test</li></ul></div></div></div>
+        </div>
+
+        <!-- EQ 5 -->
+        <div class="eq-card" data-tags="string">
+          <div class="eq-head" onclick="toggleEQ(this)"><div class="eq-num">05</div><div class="eq-meta"><div class="eq-qtitle">Remove Adjacent Duplicate Characters</div><div class="eq-tags-row"><span class="eq-tag">string</span><span class="eq-tag">char array</span></div></div><div class="eq-right"><div class="diff-pill d-med">MEDIUM</div><div class="sol-btn"><span class="sol-icon">▼</span>Show Solution</div></div></div>
+          <div class="eq-body"><div class="eq-tabs"><div class="eq-tab active" onclick="switchEQTab(this)">Problem</div><div class="eq-tab" onclick="switchEQTab(this)">Solution</div><div class="eq-tab" onclick="switchEQTab(this)">Key Insight</div></div>
+          <div class="eq-tab-content active"><div class="eq-problem">Implement <ic>void removeDuplicates(char str[])</ic> that removes adjacent duplicate characters in-place.</div><div class="pyq-sample">"Hello World" → "Helo World"
+"aabbcc"      → "abc"</div></div>
+          <div class="eq-tab-content"><div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">f4.c</span></div><div class="sol-code"><span class="tp">void</span> <span class="fn">removeDuplicates</span>(<span class="tp">char</span> str[]) {
+    <span class="tp">int</span> n = <span class="fn">strlen</span>(str);
+    <span class="tp">int</span> write = <span class="nm">0</span>;
+    <span class="kw">for</span>(<span class="tp">int</span> read = <span class="nm">0</span>; read <span class="op">&lt;</span> n; read<span class="op">++</span>) {
+        <span class="kw">if</span>(write <span class="op">==</span> <span class="nm">0</span> || str[read] <span class="op">!=</span> str[write<span class="op">-</span><span class="nm">1</span>])
+            str[write<span class="op">++</span>] = str[read];
+    }
+    str[write] = <span class="str">'\0'</span>;  <span class="cm">// null terminate!</span>
+}</div></div></div>
+          <div class="eq-tab-content"><div class="key-insight-box"><div class="ki-title">Key Insights</div><ul class="ki-list"><li>Two-pointer: read scans forward, write only advances when character differs from previous written</li><li>Always null-terminate with <ic>str[write] = '\0'</ic></li></ul></div></div></div>
+        </div>
+
+        <!-- EQ 6 -->
+        <div class="eq-card" data-tags="matrix">
+          <div class="eq-head" onclick="toggleEQ(this)"><div class="eq-num">06</div><div class="eq-meta"><div class="eq-qtitle">Rotate N×N Matrix 90° Clockwise In-Place</div><div class="eq-tags-row"><span class="eq-tag">matrix</span><span class="eq-tag">2D array</span></div></div><div class="eq-right"><div class="diff-pill d-med">MEDIUM</div><div class="sol-btn"><span class="sol-icon">▼</span>Show Solution</div></div></div>
+          <div class="eq-body"><div class="eq-tabs"><div class="eq-tab active" onclick="switchEQTab(this)">Problem</div><div class="eq-tab" onclick="switchEQTab(this)">Solution</div><div class="eq-tab" onclick="switchEQTab(this)">Key Insight</div></div>
+          <div class="eq-tab-content active"><div class="eq-problem">Implement <ic>void rotateMatrix(int mat[][100], int n)</ic> that rotates an n×n matrix 90° clockwise in-place.</div><div class="pyq-sample">1 2 3     7 4 1
+4 5 6  →  8 5 2
+7 8 9     9 6 3</div></div>
+          <div class="eq-tab-content"><div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">f5.c</span></div><div class="sol-code"><span class="tp">void</span> <span class="fn">rotateMatrix</span>(<span class="tp">int</span> mat[][<span class="nm">100</span>], <span class="tp">int</span> n) {
+    <span class="cm">/* Step 1: Transpose */</span>
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span>n; i<span class="op">++</span>)
+        <span class="kw">for</span>(<span class="tp">int</span> j=i<span class="op">+</span><span class="nm">1</span>; j<span class="op">&lt;</span>n; j<span class="op">++</span>) {
+            <span class="tp">int</span> tmp=mat[i][j];
+            mat[i][j]=mat[j][i];
+            mat[j][i]=tmp;
+        }
+    <span class="cm">/* Step 2: Reverse each row */</span>
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span>n; i<span class="op">++</span>)
+        <span class="kw">for</span>(<span class="tp">int</span> j=<span class="nm">0</span>; j<span class="op">&lt;</span>n<span class="op">/</span><span class="nm">2</span>; j<span class="op">++</span>) {
+            <span class="tp">int</span> tmp=mat[i][j];
+            mat[i][j]=mat[i][n<span class="op">-</span><span class="nm">1</span><span class="op">-</span>j];
+            mat[i][n<span class="op">-</span><span class="nm">1</span><span class="op">-</span>j]=tmp;
+        }
+}</div></div></div>
+          <div class="eq-tab-content"><div class="key-insight-box"><div class="ki-title">Key Insights</div><ul class="ki-list"><li>90° CW = Transpose + Reverse each row</li><li>270° CW (=90° CCW) = Transpose + Reverse each column</li><li>Transpose: only swap upper triangle (j &gt; i) to avoid double-swapping</li></ul></div></div></div>
+        </div>
+
+        <!-- EQ 7 -->
+        <div class="eq-card" data-tags="search">
+          <div class="eq-head" onclick="toggleEQ(this)"><div class="eq-num">07</div><div class="eq-meta"><div class="eq-qtitle">Check if Array B is a Subset of Array A</div><div class="eq-tags-row"><span class="eq-tag">search</span><span class="eq-tag">arrays</span></div></div><div class="eq-right"><div class="diff-pill d-med">MEDIUM</div><div class="sol-btn"><span class="sol-icon">▼</span>Show Solution</div></div></div>
+          <div class="eq-body"><div class="eq-tabs"><div class="eq-tab active" onclick="switchEQTab(this)">Problem</div><div class="eq-tab" onclick="switchEQTab(this)">Solution</div><div class="eq-tab" onclick="switchEQTab(this)">Key Insight</div></div>
+          <div class="eq-tab-content active"><div class="eq-problem">Implement <ic>int isSubset(int Arr1[], int Arr2[], int n1, int n2)</ic>. Return 1 if every element of Arr2 exists in Arr1, else 0.</div><div class="pyq-sample">Arr1:[1,3,2,4,5], Arr2:[1,4,5]   → subset ✓
+Arr1:[3,4,-1,0,2], Arr2:[3,-1,-2] → not subset ✗</div></div>
+          <div class="eq-tab-content"><div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">f1.c</span></div><div class="sol-code"><span class="tp">int</span> <span class="fn">isSubset</span>(<span class="tp">int</span> Arr1[], <span class="tp">int</span> Arr2[], <span class="tp">int</span> n1, <span class="tp">int</span> n2) {
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span>n2; i<span class="op">++</span>) {
+        <span class="tp">int</span> found = <span class="nm">0</span>;
+        <span class="kw">for</span>(<span class="tp">int</span> j=<span class="nm">0</span>; j<span class="op">&lt;</span>n1; j<span class="op">++</span>)
+            <span class="kw">if</span>(Arr2[i] <span class="op">==</span> Arr1[j]) { found=<span class="nm">1</span>; <span class="kw">break</span>; }
+        <span class="kw">if</span>(!found) <span class="kw">return</span> <span class="nm">0</span>;
+    }
+    <span class="kw">return</span> <span class="nm">1</span>;
+}</div></div></div>
+          <div class="eq-tab-content"><div class="key-insight-box"><div class="ki-title">Key Insights</div><ul class="ki-list"><li>For each element in Arr2, linear search in Arr1. One miss = not a subset</li><li>The <ic>found</ic> flag pattern is very common — learn it well</li></ul></div></div></div>
+        </div>
+
+        <!-- EQ 8 -->
+        <div class="eq-card" data-tags="struct">
+          <div class="eq-head" onclick="toggleEQ(this)"><div class="eq-num">08</div><div class="eq-meta"><div class="eq-qtitle">Student Record — Struct Array + Find Topper</div><div class="eq-tags-row"><span class="eq-tag">struct</span><span class="eq-tag">arrays</span></div></div><div class="eq-right"><div class="diff-pill d-easy">EASY</div><div class="sol-btn"><span class="sol-icon">▼</span>Show Solution</div></div></div>
+          <div class="eq-body"><div class="eq-tabs"><div class="eq-tab active" onclick="switchEQTab(this)">Problem</div><div class="eq-tab" onclick="switchEQTab(this)">Solution</div><div class="eq-tab" onclick="switchEQTab(this)">Key Insight</div></div>
+          <div class="eq-tab-content active"><div class="eq-problem">Define struct Student (rollNo int, name char[30], marks float). Implement <ic>void display(Student s[], int n)</ic> and <ic>Student findTopper(Student s[], int n)</ic>.</div><div class="pyq-sample">Topper: Bob (92.00)</div></div>
+          <div class="eq-tab-content"><div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">student.c</span></div><div class="sol-code">Student <span class="fn">findTopper</span>(Student s[], <span class="tp">int</span> n) {
+    <span class="tp">int</span> maxIdx = <span class="nm">0</span>;
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">1</span>; i<span class="op">&lt;</span>n; i<span class="op">++</span>)
+        <span class="kw">if</span>(s[i].marks <span class="op">&gt;</span> s[maxIdx].marks)
+            maxIdx = i;
+    <span class="kw">return</span> s[maxIdx];  <span class="cm">/* struct by value */</span>
+}</div></div></div>
+          <div class="eq-tab-content"><div class="key-insight-box"><div class="ki-title">Key Insights</div><ul class="ki-list"><li>Struct can be returned by value — C copies all fields</li><li>Track maxIdx (index), not the max value — so you can return the whole struct</li></ul></div></div></div>
+        </div>
+
+        <!-- EQ 9 -->
+        <div class="eq-card" data-tags="arrays sort">
+          <div class="eq-head" onclick="toggleEQ(this)"><div class="eq-num">09</div><div class="eq-meta"><div class="eq-qtitle">Bubble Sort — Ascending + Count Swaps</div><div class="eq-tags-row"><span class="eq-tag">arrays</span><span class="eq-tag">sort</span></div></div><div class="eq-right"><div class="diff-pill d-easy">EASY</div><div class="sol-btn"><span class="sol-icon">▼</span>Show Solution</div></div></div>
+          <div class="eq-body"><div class="eq-tabs"><div class="eq-tab active" onclick="switchEQTab(this)">Problem</div><div class="eq-tab" onclick="switchEQTab(this)">Solution</div><div class="eq-tab" onclick="switchEQTab(this)">Key Insight</div></div>
+          <div class="eq-tab-content active"><div class="eq-problem">Implement <ic>int bubbleSort(int arr[], int n)</ic> that sorts ascending and returns total swaps made.</div><div class="pyq-sample">Input: 5 1 4 2 8 → Sorted: 1 2 4 5 8, Swaps: 5
+Input: 1 2 3 4 5 → Sorted: 1 2 3 4 5, Swaps: 0</div></div>
+          <div class="eq-tab-content"><div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">f1.c</span></div><div class="sol-code"><span class="tp">int</span> <span class="fn">bubbleSort</span>(<span class="tp">int</span> arr[], <span class="tp">int</span> n) {
+    <span class="tp">int</span> swaps = <span class="nm">0</span>;
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span>n<span class="op">-</span><span class="nm">1</span>; i<span class="op">++</span>)
+        <span class="kw">for</span>(<span class="tp">int</span> j=<span class="nm">0</span>; j<span class="op">&lt;</span>n<span class="op">-</span><span class="nm">1</span><span class="op">-</span>i; j<span class="op">++</span>)
+            <span class="kw">if</span>(arr[j] <span class="op">&gt;</span> arr[j<span class="op">+</span><span class="nm">1</span>]) {
+                <span class="tp">int</span> tmp=arr[j]; arr[j]=arr[j<span class="op">+</span><span class="nm">1</span>]; arr[j<span class="op">+</span><span class="nm">1</span>]=tmp;
+                swaps<span class="op">++</span>;
+            }
+    <span class="kw">return</span> swaps;
+}</div></div></div>
+          <div class="eq-tab-content"><div class="key-insight-box"><div class="ki-title">Key Insights</div><ul class="ki-list"><li>Inner bound is <ic>n-1-i</ic> — last i elements are already sorted after i passes</li><li>Never <ic>a = b; b = a;</ic> — always use a temp variable</li></ul></div></div></div>
+        </div>
+
+        <!-- EQ 10 -->
+        <div class="eq-card" data-tags="pointer">
+          <div class="eq-head" onclick="toggleEQ(this)"><div class="eq-num">10</div><div class="eq-meta"><div class="eq-qtitle">Print 2D Array Using Only Pointer Arithmetic</div><div class="eq-tags-row"><span class="eq-tag">pointer</span><span class="eq-tag">2D array</span></div></div><div class="eq-right"><div class="diff-pill d-med">MEDIUM</div><div class="sol-btn"><span class="sol-icon">▼</span>Show Solution</div></div></div>
+          <div class="eq-body"><div class="eq-tabs"><div class="eq-tab active" onclick="switchEQTab(this)">Problem</div><div class="eq-tab" onclick="switchEQTab(this)">Solution</div><div class="eq-tab" onclick="switchEQTab(this)">Key Insight</div></div>
+          <div class="eq-tab-content active"><div class="eq-problem">Print an n×n array using ONLY pointer arithmetic — no <ic>arr[i][j]</ic> allowed. Use <ic>*(*(arr+i)+j)</ic> syntax.</div></div>
+          <div class="eq-tab-content"><div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">f1.c</span></div><div class="sol-code"><span class="mc">#define</span> N <span class="nm">100</span>
+<span class="tp">void</span> <span class="fn">printMatrix</span>(<span class="tp">int</span> arr[N][N], <span class="tp">int</span> n) {
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span>n; i<span class="op">++</span>) {
+        <span class="kw">for</span>(<span class="tp">int</span> j=<span class="nm">0</span>; j<span class="op">&lt;</span>n; j<span class="op">++</span>)
+            <span class="fn">printf</span>(<span class="str">"%d  "</span>, <span class="op">*</span>(<span class="op">*</span>(arr<span class="op">+</span>i)<span class="op">+</span>j));
+        <span class="fn">printf</span>(<span class="str">"\n"</span>);
+    }
+}
+<span class="cm">/* Half-pyramid variant (common PYQ) */</span>
+<span class="tp">void</span> <span class="fn">printHalfPyramid</span>(<span class="tp">int</span> arr[N][N], <span class="tp">int</span> n) {
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span>n; i<span class="op">++</span>) {
+        <span class="kw">for</span>(<span class="tp">int</span> j=<span class="nm">0</span>; j<span class="op">&lt;=</span>i; j<span class="op">++</span>)
+            <span class="fn">printf</span>(<span class="str">"%d  "</span>, <span class="op">*</span>(<span class="op">*</span>(arr<span class="op">+</span>i)<span class="op">+</span>j));
+        <span class="fn">printf</span>(<span class="str">"\n"</span>);
+    }
+}</div></div></div>
+          <div class="eq-tab-content"><div class="key-insight-box"><div class="ki-title">Key Insights</div><ul class="ki-list"><li><ic>arr+i</ic> = pointer to row i. <ic>*(arr+i)</ic> = pointer to first element of row i. <ic>*(*(arr+i)+j)</ic> = arr[i][j]</li><li>Function signature must specify column size: <ic>int arr[N][N]</ic> or <ic>int arr[][N]</ic></li></ul></div></div></div>
+        </div>
+
+        <!-- EQ 11 -->
+        <div class="eq-card" data-tags="dynamic">
+          <div class="eq-head" onclick="toggleEQ(this)"><div class="eq-num">11</div><div class="eq-meta"><div class="eq-qtitle">Dynamic Array — Dot Product via CLI Arguments</div><div class="eq-tags-row"><span class="eq-tag">malloc</span><span class="eq-tag">argc/argv</span></div></div><div class="eq-right"><div class="diff-pill d-hard">HARD</div><div class="sol-btn"><span class="sol-icon">▼</span>Show Solution</div></div></div>
+          <div class="eq-body"><div class="eq-tabs"><div class="eq-tab active" onclick="switchEQTab(this)">Problem</div><div class="eq-tab" onclick="switchEQTab(this)">Solution</div><div class="eq-tab" onclick="switchEQTab(this)">Key Insight</div></div>
+          <div class="eq-tab-content active"><div class="eq-problem">Take array size as a CLI argument. Dynamically allocate two arrays, compute dot product, print result, free memory. No static arrays.</div><div class="pyq-sample">./prog 3
+Enter array 1: 2 5 10
+Enter array 2: 4 10 8
+Dot product: 138</div></div>
+          <div class="eq-tab-content"><div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">main.c</span></div><div class="sol-code"><span class="tp">int</span> <span class="fn">main</span>(<span class="tp">int</span> argc, <span class="tp">char</span> <span class="op">*</span>argv[]) {
+    <span class="kw">if</span>(argc <span class="op">!=</span> <span class="nm">2</span>) { <span class="fn">printf</span>(<span class="str">"Usage: %s &lt;n&gt;\n"</span>, argv[<span class="nm">0</span>]); <span class="kw">return</span> <span class="nm">1</span>; }
+    <span class="tp">int</span> n = <span class="fn">atoi</span>(argv[<span class="nm">1</span>]);
+    <span class="tp">int</span> <span class="op">*</span>a = (<span class="tp">int</span><span class="op">*</span>)<span class="fn">malloc</span>(n <span class="op">*</span> <span class="kw">sizeof</span>(<span class="tp">int</span>));
+    <span class="tp">int</span> <span class="op">*</span>b = (<span class="tp">int</span><span class="op">*</span>)<span class="fn">malloc</span>(n <span class="op">*</span> <span class="kw">sizeof</span>(<span class="tp">int</span>));
+    <span class="kw">if</span>(!a || !b) { <span class="fn">printf</span>(<span class="str">"Alloc failed\n"</span>); <span class="kw">return</span> <span class="nm">1</span>; }
+    <span class="fn">printf</span>(<span class="str">"Enter array 1: "</span>);
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span>n; i<span class="op">++</span>) <span class="fn">scanf</span>(<span class="str">"%d"</span>, <span class="op">&amp;</span>a[i]);
+    <span class="fn">printf</span>(<span class="str">"Enter array 2: "</span>);
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span>n; i<span class="op">++</span>) <span class="fn">scanf</span>(<span class="str">"%d"</span>, <span class="op">&amp;</span>b[i]);
+    <span class="tp">int</span> dot = <span class="nm">0</span>;
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span>n; i<span class="op">++</span>) dot <span class="op">+=</span> a[i] <span class="op">*</span> b[i];
+    <span class="fn">printf</span>(<span class="str">"Dot product: %d\n"</span>, dot);
+    <span class="fn">free</span>(a); <span class="fn">free</span>(b);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</div></div></div>
+          <div class="eq-tab-content"><div class="key-insight-box"><div class="ki-title">Key Insights</div><ul class="ki-list"><li>argc == 2 means program + one argument. Validate before using argv[1]</li><li>atoi(argv[1]) converts string to integer</li><li>Malloc pattern: (int*) malloc(n * sizeof(int)). Always check NULL</li><li>Always free in reverse order of allocation</li></ul></div></div></div>
+        </div>
+
+        <!-- EQ 12 -->
+        <div class="eq-card" data-tags="dynamic struct">
+          <div class="eq-head" onclick="toggleEQ(this)"><div class="eq-num">12</div><div class="eq-meta"><div class="eq-qtitle">Dynamic Array of Structs + CLI Size Argument</div><div class="eq-tags-row"><span class="eq-tag">malloc</span><span class="eq-tag">struct</span><span class="eq-tag">argc/argv</span></div></div><div class="eq-right"><div class="diff-pill d-hard">HARD</div><div class="sol-btn"><span class="sol-icon">▼</span>Show Solution</div></div></div>
+          <div class="eq-body"><div class="eq-tabs"><div class="eq-tab active" onclick="switchEQTab(this)">Problem</div><div class="eq-tab" onclick="switchEQTab(this)">Solution</div><div class="eq-tab" onclick="switchEQTab(this)">Key Insight</div></div>
+          <div class="eq-tab-content active"><div class="eq-problem">Number of employees as CLI argument. Dynamically allocate array of Employee structs (id int, name char[30], salary float). Read all employees, find top earner, print all records. Free memory.</div><div class="pyq-sample">./emp 3 → enter employees → Top earner: Bob (92000.00)</div></div>
+          <div class="eq-tab-content"><div class="sol-file"><div class="sol-file-header"><span class="sol-file-name">main.c</span></div><div class="sol-code"><span class="kw">typedef</span> <span class="kw">struct</span> {
+    <span class="tp">int</span>   id;
+    <span class="tp">char</span>  name[<span class="nm">30</span>];
+    <span class="tp">float</span> salary;
+} Employee;
+
+<span class="tp">int</span> <span class="fn">main</span>(<span class="tp">int</span> argc, <span class="tp">char</span> <span class="op">*</span>argv[]) {
+    <span class="tp">int</span> n = <span class="fn">atoi</span>(argv[<span class="nm">1</span>]);
+    Employee <span class="op">*</span>emp = (Employee<span class="op">*</span>)<span class="fn">malloc</span>(n<span class="op">*</span><span class="kw">sizeof</span>(Employee));
+    <span class="kw">if</span>(!emp) <span class="kw">return</span> <span class="nm">1</span>;
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">0</span>; i<span class="op">&lt;</span>n; i<span class="op">++</span>)
+        <span class="fn">scanf</span>(<span class="str">"%d %s %f"</span>, <span class="op">&amp;</span>emp[i].id, emp[i].name, <span class="op">&amp;</span>emp[i].salary);
+    <span class="tp">int</span> top=<span class="nm">0</span>;
+    <span class="kw">for</span>(<span class="tp">int</span> i=<span class="nm">1</span>; i<span class="op">&lt;</span>n; i<span class="op">++</span>)
+        <span class="kw">if</span>(emp[i].salary <span class="op">&gt;</span> emp[top].salary) top=i;
+    <span class="fn">printf</span>(<span class="str">"Top earner: %s (%.2f)\n"</span>, emp[top].name, emp[top].salary);
+    <span class="fn">free</span>(emp);
+    <span class="kw">return</span> <span class="nm">0</span>;
+}</div></div></div>
+          <div class="eq-tab-content"><div class="key-insight-box"><div class="ki-title">Key Insights</div><ul class="ki-list"><li><ic>malloc(n * sizeof(Employee))</ic> — contiguous block, access with emp[i].field</li><li>scanf "%s" for char arrays — no & needed (array name IS a pointer)</li><li>Single free(emp) frees the whole block</li></ul></div></div></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ WINDOW 4: QUIZ ══════════════════ -->
+<div class="window-panel" id="win-quiz">
+  <div class="content-area">
+    <div class="quiz-wrap">
+      <div class="quiz-hero-text">
+        <div class="eyebrow"><div class="eyebrow-line"></div><div class="eyebrow-text">Quick Quiz</div></div>
+        <h2>40 Questions<br><span>Labs 7–11 Focused</span></h2>
+        <p>Randomized order. Heavy focus on Arrays, Multi-file, Structs, Pointers, and Dynamic Memory.</p>
+      </div>
+      <div class="quiz-box">
+        <div class="qz-prog" id="qzProg2">Question 1 / 40</div>
+        <div class="qz-score" id="qzScore2"></div>
+        <div class="qz-q" id="qzQ2"></div>
+        <div class="qz-opts" id="qzOpts2"></div>
+        <div class="qz-fb" id="qzFb2"></div>
+        <div class="qz-nav">
+          <button class="btn btn-p" id="qzNext2" onclick="nextQ2()" style="display:none">Next →</button>
+          <button class="btn btn-g" onclick="resetQuiz2()">↺ Restart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /windows -->
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-nav">
+  <div class="mobile-nav-items">
+    <div class="mn-item active" id="mn-labs" onclick="switchWindow('labs',null,0)"><div class="mn-icon">📋</div><div class="mn-label">Labs</div></div>
+    <div class="mn-item" id="mn-pyq" onclick="switchWindow('pyq',null,1)"><div class="mn-icon">📄</div><div class="mn-label">PYQ</div></div>
+    <div class="mn-item" id="mn-expected" onclick="switchWindow('expected',null,2)"><div class="mn-icon">✨</div><div class="mn-label">Expected</div></div>
+    <div class="mn-item" id="mn-quiz" onclick="switchWindow('quiz',null,3)"><div class="mn-icon">🧠</div><div class="mn-label">Quiz</div></div>
+  </div>
+</div>
+
+<script>
+// ─── WINDOW SWITCHING ───
+const WIN_IDS = ['labs','pyq','expected','quiz'];
+const MN_IDS  = ['mn-labs','mn-pyq','mn-expected','mn-quiz'];
+
+function switchWindow(id, tabEl, idx) {
+  document.querySelectorAll('.window-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('win-'+id).classList.add('active');
+  // Desktop tabs
+  document.querySelectorAll('.wtab').forEach(t => t.classList.remove('active'));
+  if(tabEl) tabEl.classList.add('active');
+  else {
+    const tabs = document.querySelectorAll('.wtab');
+    if(tabs[idx]) tabs[idx].classList.add('active');
+  }
+  // Mobile nav
+  MN_IDS.forEach(m => document.getElementById(m).classList.remove('active'));
+  document.getElementById(MN_IDS[idx]).classList.add('active');
+  closeSidebar();
+}
+
+// ─── SIDEBAR (mobile overlay) ───
+function toggleSidebar() {
+  const active = document.querySelector('.window-panel.active');
+  const sidebar = active ? active.querySelector('.sidebar') : null;
+  const backdrop = document.getElementById('sidebarBackdrop');
+  if(!sidebar) return;
+  sidebar.classList.toggle('open');
+  backdrop.classList.toggle('open');
+}
+
+function closeSidebar() {
+  document.querySelectorAll('.sidebar').forEach(s => s.classList.remove('open'));
+  document.getElementById('sidebarBackdrop').classList.remove('open');
+}
+
+// ─── LAB SECTIONS ───
+function showLabSec(id, el) {
+  document.querySelectorAll('#labContent .content-sec').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('#labSidebar .sb-item').forEach(i => i.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('labContent').scrollTo(0,0);
+  closeSidebar();
+}
+
+// ─── PYQ SECTIONS ───
+function showPYQSec(id, el, sbId) {
+  document.querySelectorAll('#pyqContent .content-sec').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('#'+sbId+' .sb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pyqContent').scrollTo(0,0);
+  closeSidebar();
+}
+
+// ─── EQ SECTIONS ───
+function showEQSec(id, el, sbId) {
+  document.querySelectorAll('#eqContent .content-sec').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('#'+sbId+' .sb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('eqContent').scrollTo(0,0);
+  closeSidebar();
+}
+
+// ─── PYQ CARD TOGGLE ───
+function togglePYQCard(headEl) {
+  headEl.parentElement.classList.toggle('open');
+}
+
+// ─── EQ CARD TOGGLE ───
+function toggleEQ(headEl) {
+  const card = headEl.parentElement;
+  card.classList.toggle('open');
+  if(card.classList.contains('open')) {
+    const tabs = card.querySelectorAll('.eq-tab');
+    const contents = card.querySelectorAll('.eq-tab-content');
+    tabs.forEach(t => t.classList.remove('active'));
+    contents.forEach(c => c.classList.remove('active'));
+    tabs[0].classList.add('active');
+    contents[0].classList.add('active');
+  }
+}
+
+// ─── EQ TAB SWITCH ───
+function switchEQTab(tabEl) {
+  const body = tabEl.closest('.eq-body');
+  const tabs = body.querySelectorAll('.eq-tab');
+  const contents = body.querySelectorAll('.eq-tab-content');
+  const idx = Array.from(tabs).indexOf(tabEl);
+  tabs.forEach(t => t.classList.remove('active'));
+  contents.forEach(c => c.classList.remove('active'));
+  tabs[idx].classList.add('active');
+  contents[idx].classList.add('active');
+}
+
+// ─── FILTER SIDEBAR ───
+function filterSidebar(val, sbId) {
+  const v = val.toLowerCase();
+  document.querySelectorAll('#'+sbId+' .sb-item').forEach(item => {
+    item.style.display = (!v || item.textContent.toLowerCase().includes(v)) ? '' : 'none';
+  });
+}
+
+// ─── FILTER EQ CARDS ───
+function filterEQ(tag) {
+  document.querySelectorAll('.eq-card').forEach(card => {
+    card.style.display = (!tag || (card.dataset.tags||'').includes(tag)) ? '' : 'none';
+  });
+}
+
+// ─── QUIZ DATA ───
+const QS = [
+  {q:"What does the `pwd` command do?",o:["Print working directory","Print word count","Preview directory","Pause write daemon"],a:0,e:"pwd = Print Working Directory. Shows your exact current location in the filesystem tree."},
+  {q:"What is the difference between > and >> in Unix?",o:["No difference","> overwrites, >> appends",">> overwrites, > appends","> creates file only"],a:1,e:"> overwrites the file completely. >> appends to the end without destroying existing content."},
+  {q:"What does grep -v pattern file do?",o:["Verbose output","Lines NOT matching pattern","Version info","Variable grep"],a:1,e:"-v inverts the match: prints all lines that do NOT contain the pattern."},
+  {q:"Which ls flag shows hidden (dot) files?",o:["-h","-l","-a","-r"],a:2,e:"ls -a shows ALL files including those whose names start with . (hidden files)."},
+  {q:"Result of 7/2 when both operands are int in C?",o:["3.5","3","4","Compile error"],a:1,e:"Integer division truncates the decimal: 7/2 = 3. Use (double)7/2 to get 3.5."},
+  {q:"What format specifier is used to print a double?",o:["%f","%d","%lf","%ld"],a:2,e:"%lf is for double. %f is for float. Mixing them causes subtle bugs."},
+  {q:"Why does scanf need & before the variable name?",o:["Bitwise AND","Address of variable — tells scanf where to write","Mandatory C syntax","Prevents overflow"],a:1,e:"& gives the memory address. scanf needs to know WHERE to write the scanned value."},
+  {q:"do-while vs while — key difference?",o:["No difference","do-while runs body at least once","while is faster","do-while has no condition"],a:1,e:"do-while checks its condition AFTER the body executes — so the body always runs at least once."},
+  {q:"while(i = 2) is what kind of bug?",o:["Syntax error","Infinite loop — assignment always truthy","Runs exactly twice","Never runs"],a:1,e:"i=2 is assignment (returns 2, truthy). Should be i==2 for comparison."},
+  {q:"3 % 2 in C equals?",o:["1.5","1","0","Compile error"],a:1,e:"% is the modulus (remainder) operator. 3 / 2 = 1 remainder 1."},
+  {q:"Binary search requires the array to be?",o:["Sorted","All unique values","Size > 100","Integer type only"],a:0,e:"Binary search works by halving the search space — only works if the array is sorted."},
+  {q:"Selection sort time complexity?",o:["O(n)","O(n log n)","O(n²)","O(log n)"],a:2,e:"Two nested loops each running up to n gives O(n²) comparisons regardless of input order."},
+  {q:"Why does sizeof(arr) inside a function give 8 instead of array size?",o:["GCC bug","Array decays to pointer — sizeof pointer = 8","sizeof only works in main","Array is copied on call"],a:1,e:"Arrays decay to pointers when passed to functions. sizeof(pointer) = 8 on 64-bit systems."},
+  {q:"After one full pass of bubble sort on [5,3,1,2,4], what is guaranteed?",o:["Array is fully sorted","Largest element is at the end","Smallest element is at front","Nothing changes"],a:1,e:"Each complete pass of bubble sort moves the largest unsorted element to its correct final position."},
+  {q:"Passing a 2D array to a function: what size MUST be specified?",o:["Only rows","Only columns","Both","Neither"],a:1,e:"Column count must be fixed: int func(int arr[][COLS], int rows). Rows can be omitted, columns cannot."},
+  {q:"Accessing arr[10] on an array of size 10 (valid indices 0–9)?",o:["Compile error","Segfault / undefined behavior","Returns 0","Wraps to arr[0]"],a:1,e:"C does NO bounds checking. arr[10] is undefined behavior — can silently corrupt memory or crash."},
+  {q:"strcmp(s1, s2) returns what when both strings are equal?",o:["1","-1","0","NULL"],a:2,e:"strcmp returns 0 for equal strings. Positive if s1 > s2 lexicographically."},
+  {q:"#ifndef in a header file prevents?",o:["Compilation","Multiple inclusion of the same header","Syntax errors","Linker errors"],a:1,e:"Include guards prevent a header from being processed more than once per translation unit."},
+  {q:"gcc -c file.c produces?",o:["Executable a.out","Object file file.o","Assembly file .s","Another header"],a:1,e:"-c flag compiles source to object code (.o) without linking."},
+  {q:"How to link two object files into a single executable?",o:["gcc -c f1.o f2.o","gcc -o prog f1.o f2.o","ld -r f1.o f2.o","gcc -link f1.o f2.o"],a:1,e:"gcc -o prog f1.o f2.o links both object files and produces executable 'prog'."},
+  {q:"'Undefined reference to sortPizzas' at link time means?",o:["Typo","The .o file containing sortPizzas wasn't linked","Header not included","Wrong return type"],a:1,e:"You declared and called sortPizzas(), but didn't compile/link the .c file that defines it."},
+  {q:"In a multi-file shell script, what should the FIRST step always be?",o:["Run the executable","gcc -c all files","rm -f *.o to clean stale object files","#include all headers"],a:2,e:"Always start with rm -f *.o to delete stale compiled objects before a fresh build."},
+  {q:"The extern keyword in store.h before 'int count' means?",o:["count is constant","Declaration only — defined in one .c file","Shared via stack","count is a global register"],a:1,e:"extern declares without defining. It tells every .c: 'count exists somewhere — link to it.'"},
+  {q:"typedef struct Book BOOK; lets you do what?",o:["Write struct Book b","Write BOOK b (no 'struct' keyword)","Both needed","Creates anonymous struct"],a:1,e:"typedef creates an alias. With it you write BOOK b; instead of struct Book b;"},
+  {q:"How do you access member 'price' via a struct pointer p?",o:["p.price","*p.price","p->price","(*p).price or p->price (both work)"],a:3,e:"Both (*p).price and p->price are valid. p->price is the conventional shorthand."},
+  {q:"In a struct project header, the global array is declared with extern because?",o:["Constant","Avoids redefining in every .c","Faster","Required for arrays"],a:1,e:"extern in header = declaration. The actual definition lives in exactly one .c file."},
+  {q:"#define MAX_SIZE 100 is processed at which stage?",o:["Compile time","Link time","Preprocessor","Runtime"],a:2,e:"#define is a preprocessor directive. Text substitution happens before compilation."},
+  {q:"Where does the struct definition go in a multi-file project?",o:["main.c only","Every .c separately","The .h header file","The shell script"],a:2,e:"Struct definitions live in .h files with #ifndef guards."},
+  {q:"int *p; *p = 5; — what is the bug?",o:["Syntax error","p is uninitialized — undefined behavior","* is not needed","Should be int p = 5"],a:1,e:"p is declared but never assigned a valid address. Dereferencing it reads/writes garbage memory."},
+  {q:"*(ptr++) when ptr points to arr[0] — what value is returned?",o:["arr[1] immediately","arr[0], then ptr advances","arr[1], ptr stays","Compile error"],a:1,e:"Post-increment: the current value (arr[0]) is used FIRST, then ptr is incremented."},
+  {q:"Pass-by-value in C means?",o:["Original variable is changed","Function gets a copy — original unchanged","Both share memory","A pointer is always involved"],a:1,e:"C copies the argument. Changes inside the function affect only the local copy."},
+  {q:"*(arr+i) is equivalent to?",o:["arr+i (address)","arr[i]","*arr + i","(*arr)[i]"],a:1,e:"*(arr+i) and arr[i] are 100% identical — pointer arithmetic."},
+  {q:"To modify a variable inside a function, you pass?",o:["The variable directly","A copy","Its address using &","A global variable"],a:2,e:"Pass &var — the function receives a pointer and uses *ptr = newValue to change the original."},
+  {q:"int arr[5]={1,2,3,4,5}; int *p=arr; What is *(p+3)?",o:["3","4","arr[3]=4","arr[4]=5"],a:2,e:"p points to arr[0]. p+3 points to arr[3]. *(p+3) = arr[3] = 4."},
+  {q:"malloc() returns what when allocation fails?",o:["0","NULL","-1","A garbage pointer"],a:1,e:"malloc returns NULL on failure. ALWAYS check before using the allocated memory."},
+  {q:"What does atoi(argv[1]) do?",o:["Int to string","Converts string argument to integer","Gets argument length","Type-checks it"],a:1,e:"atoi = ASCII to Integer. Converts \"42\" to the integer 42. Lives in <stdlib.h>."},
+  {q:"argc for: ./prog 10 20",o:["1","2","3","0"],a:2,e:"argc counts ALL tokens: program name + two arguments = 3."},
+  {q:"How to free a dynamically allocated array arr?",o:["delete arr","free(arr)","free(*arr)","Automatic"],a:1,e:"free(arr) releases heap memory. Heap must be manually freed — not automatic like stack."},
+  {q:"malloc(n * sizeof(int)) allocates?",o:["n bits","n bytes total","Space for n integers","1 integer"],a:2,e:"sizeof(int) = 4 bytes. malloc(n * sizeof(int)) = space for n integers."},
+  {q:"calloc vs malloc — key difference?",o:["calloc is slower","calloc zero-initializes","malloc is safer","No difference"],a:1,e:"calloc allocates AND zeroes memory. malloc allocates but leaves garbage values."},
+];
+
+const QZ2 = {idx:0, score:0, answered:false, shuffled:[]};
+function initQZ2(){QZ2.idx=0;QZ2.score=0;QZ2.answered=false;QZ2.shuffled=[...QS].sort(()=>Math.random()-0.5);}
+initQZ2();
+
+function renderQZ2() {
+  QZ2.answered = false;
+  const total = QZ2.shuffled.length;
+  if(QZ2.idx >= total) {
+    document.getElementById('qzQ2').textContent = `Done! Final score: ${QZ2.score} / ${total}`;
+    document.getElementById('qzOpts2').innerHTML = '';
+    document.getElementById('qzFb2').className = 'qz-fb';
+    document.getElementById('qzNext2').style.display = 'none';
+    document.getElementById('qzProg2').textContent = 'Finished!';
+    document.getElementById('qzScore2').textContent = '';
+    return;
+  }
+  const q = QZ2.shuffled[QZ2.idx];
+  document.getElementById('qzProg2').textContent = `Question ${QZ2.idx+1} / ${total}`;
+  document.getElementById('qzScore2').textContent = QZ2.idx > 0 ? `Score: ${QZ2.score}` : '';
+  document.getElementById('qzQ2').textContent = q.q;
+  document.getElementById('qzFb2').className = 'qz-fb';
+  document.getElementById('qzNext2').style.display = 'none';
+  const opts = document.getElementById('qzOpts2');
+  opts.innerHTML = '';
+  q.o.forEach((o,i)=>{
+    const d = document.createElement('div');
+    d.className = 'qz-opt';
+    d.textContent = o;
+    d.onclick = () => selectQZ2(i, q);
+    opts.appendChild(d);
+  });
+}
+
+function selectQZ2(idx, q) {
+  if(QZ2.answered) return;
+  QZ2.answered = true;
+  document.querySelectorAll('#qzOpts2 .qz-opt').forEach((o,i)=>{
+    if(i === q.a) o.classList.add('correct');
+    if(i === idx && idx !== q.a) o.classList.add('wrong');
+  });
+  const fb = document.getElementById('qzFb2');
+  if(idx === q.a) { QZ2.score++; fb.className='qz-fb ok show'; fb.textContent='✓ Correct! '+q.e; }
+  else { fb.className='qz-fb bad show'; fb.textContent='✗ Incorrect. '+q.e; }
+  document.getElementById('qzScore2').textContent = `Score: ${QZ2.score}`;
+  document.getElementById('qzNext2').style.display = 'block';
+}
+
+function nextQ2() { QZ2.idx++; renderQZ2(); }
+function resetQuiz2() { initQZ2(); renderQZ2(); }
+
+renderQZ2();
+</script>
+</body>
+</html>
+>>>>>>> a6767f2 (pre-rebase commit)
